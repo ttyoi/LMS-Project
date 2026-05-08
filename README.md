@@ -85,7 +85,6 @@ LMS-Project/
 │   │       ├── java/kr/happyjob/study/
 │   │       │   ├── common/        # 공통 (인터셉터, 필터, 스케줄러, WebSocket, 파일, 암호화)
 │   │       │   ├── config/        # Spring 설정 (CORS, WebMVC, Scheduler)
-│   │       │   ├── consupport/    # 상담 지원
 │   │       │   ├── domain/
 │   │       │   │   ├── admin/     # 관리자 도메인
 │   │       │   │   ├── instructor/# 강사 도메인
@@ -95,7 +94,6 @@ LMS-Project/
 │   │       │   │   ├── login/     # 로그인/회원가입
 │   │       │   │   ├── notice/    # 공지사항
 │   │       │   │   └── survey/    # 설문
-│   │       │   ├── supportD/      # 지원 공지
 │   │       │   └── system/        # 시스템 관리 (공통코드, 메뉴)
 │   │       ├── resources/
 │   │       │   ├── sql/mapper/    # MyBatis XML Mapper (admin/ instructor/ student/)
