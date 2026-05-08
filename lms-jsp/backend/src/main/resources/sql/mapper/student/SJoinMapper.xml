@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.domain.student.dao.SJoinDAO">
+    <!-- 사용자 아이디 중복 체크 -->
+    <select id="checkDuplicateID" parameterType="String" resultType="int">
+        select count(*)
+        from tb_userinfo
+        where loginID = #{loginID}
+    </select>
+
+    <!-- 사용자 이메일 중복 체크   -->
+    <select id="checkDuplicateEmail" parameterType="String" resultType="int">
+        select count(*)
+        from tb_userinfo
+        where email = #{email} and user_type='S'
+    </select>
+
+    <!-- 학생 회원 가입 -->
+    <insert id="insertStudentInfo" parameterType="kr.happyjob.study.domain.student.model.UserInfoVO">
+        insert into tb_userinfo
+        (
+            loginID, user_type, name, password, chk_tem_password,
+            zipcode, addr1, addr2,
+            birthday, phone, email,
+            reg_date,
+            status
+        )
+        values
+            (
+                #{loginID},'S',#{name},#{password},'N',
+                #{zipcode},#{addr1},#{addr2},
+                #{birthday},#{phone},#{email},
+                DATE_ADD(NOW(), INTERVAL 9 HOUR),
+                'R'
+            )
+    </insert>
+</mapper>

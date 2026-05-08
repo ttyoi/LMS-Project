@@ -1,0 +1,406 @@
+@charset "UTF-8";
+
+/*======================================= 버튼 (탭) =======================================*/
+.ckj-inst-tab {
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--color-gray-border);
+  top: -1px;
+}
+
+.ckj-btn.ckj-tab-btn {
+  border-radius: 8px 8px 0 0;
+  background-color: var(--color-gray-bright);
+  border: 1px solid var(--color-gray-medium);
+  border-bottom: none;
+  bottom: -1px;
+  position: relative;
+  padding: 6px 16px;
+  margin-right: 2px;
+  z-index: 0;
+  color: var(--color-gray-blue);
+}
+
+.ckj-btn.ckj-tab-btn:hover {
+  background-color: var(--color-primary-light);
+  z-index: 1;
+}
+
+.ckj-btn.ckj-tab-btn.active {
+  background-color: var(--color-primary-medium);
+  color: white;
+  font-weight: 600;
+  z-index: 2;
+}
+
+/*======================================= 강의 행 선택 =======================================*/
+#inst-course tr.is-selected td {
+  background-color: var(--color-primary-light);
+}
+
+#inst-course tr {
+  cursor: pointer;
+}
+
+/*======================================= 강의 상태 배지 =======================================*/
+.ckj-status-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  vertical-align: middle;
+  margin-right: 5px;
+  white-space: nowrap;
+  width: 27px;
+  text-align: center;
+  line-height: 1;
+}
+
+.ckj-badge-ended {
+  background-color: var(--color-gray-light);
+  color: #555;
+}
+
+.ckj-badge-active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.ckj-badge-recruiting {
+  background-color: #fff7ed;
+  color: #9a3412;
+}
+
+.ckj-badge-waiting {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.ckj-badge-rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* 종강 행: 회색 배경 */
+.ckj-list-table tbody tr.ckj-status-ended td {
+  background-color: var(--color-gray-brighter);
+}
+/* 
+.ckj-list-table tbody tr.ckj-status-ended:hover td {
+  background-color: var(--color-gray-bright);
+} */
+
+/*======================================= .ckj-right 영역 (타임라인) =======================================*/
+.ckj-timeline-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid transparent;
+  overflow: hidden;
+}
+
+.ckj-content-timeline {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.ckj-timeline-container .ckj-content-timeline {
+  border: none;
+}
+
+/* 헤더 래퍼: 스크롤 없음, 바디와 동일한 우측 거터 확보 */
+.ckj-timeline-head-wrap {
+  overflow: hidden;
+  background: var(--color-gray-th);
+  border-bottom: 1px solid var(--color-border);
+  scrollbar-gutter: stable; /* 바디 스크롤바 폭만큼 우측 거터 예약 → 컬럼 폭 일치 */
+}
+
+/* 헤더 th: 배경색 유지 (sticky 불필요 — 래퍼가 고정) */
+.ckj-content-timeline thead th {
+  background-color: var(--color-gray-th);
+}
+
+.ckj-col-room {
+  width: 60px;
+}
+
+.ckj-col-slot {
+  width: 50px;
+}
+
+.ckj-timeline-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0 6px 0;
+  border: none;
+}
+
+.ckj-timeline-container .ckj-info {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.ckj-content-timeline thead .ckj-timeline-dates th {
+  text-align: center;
+}
+
+.ckj-content-timeline tbody tr {
+  height: 28px;
+}
+
+.ckj-content-timeline tbody td,
+.ckj-content-timeline tbody th {
+  padding: 4px 0;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+/* 내부 td border: gray-bright (연하게) */
+.ckj-content-timeline tbody td {
+  border-color: #f0f0f0;
+}
+/* 강의실명 th: 구분선 유지 */
+.ckj-content-timeline tbody th {
+  border-color: var(--color-gray-border);
+}
+/* 각 강의실 첫 번째 행 상단 border 강조 (강의실 사이 구분) */
+.ckj-content-timeline .ckj-room-first-row td,
+.ckj-content-timeline .ckj-room-first-row th {
+  border-top-color: var(--color-gray-light);
+}
+
+/* 바디: 스크롤바 우측, 헤더와 동일한 거터로 컬럼 폭 동기화 */
+.ckj-timeline-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding-bottom: 10px;
+}
+
+.ckj-content-timeline tbody th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.ckj-timeline-event {
+  display: block;
+  font-size: 0.7rem;
+  margin: 2px 0;
+  padding: 1px 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+.ckj-timeline-event.first {
+  background-color: var(--color-time-1);
+}
+
+.ckj-timeline-event.second {
+  background-color: var(--color-time-2);
+}
+
+.ckj-timeline-event.third {
+  background-color: var(--color-time-3);
+}
+
+/* 탭 버튼 키보드 포커스 */
+.ckj-btn.ckj-tab-btn:focus-visible {
+  outline: 2px solid var(--color-primary-medium);
+  outline-offset: 2px;
+}
+
+/* 타임라인 헤더 날짜/요일 */
+.date-num {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.date-day {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-left: 3px;
+  text-transform: uppercase;
+}
+
+.ckj-timeline-dates th.is-sunday .date-num,
+.ckj-timeline-dates th.is-sunday .date-day {
+  color: var(--color-sunday);
+}
+
+.ckj-timeline-dates th.is-saturday .date-num,
+.ckj-timeline-dates th.is-saturday .date-day {
+  color: var(--color-saturday);
+}
+
+.ckj-timeline-dates th.is-today .date-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: var(--color-today);
+  color: white;
+}
+
+/* 출석관리 좌측 수업일수 요약 테이블 */
+.ckj-section-right table {
+  border: none;
+  font-size: 12px;
+}
+.ckj-section-right th,
+.ckj-section-right td {
+  border: none;
+  padding: 2px 6px;
+  background: transparent;
+  white-space: nowrap;
+}
+.ckj-section-right td {
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+/*======================================= 출석 관리 전용 =======================================*/
+.ckj-stu-list {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* 번호: 최소 너비 */
+.ckj-stu-list th:nth-child(1),
+.ckj-stu-list td:nth-child(1) {
+  width: 40px;
+  text-align: center;
+}
+/* 학생명: text-overflow 처리 */
+.ckj-stu-list td:nth-child(2) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0; /* table-layout:fixed 환경에서 ellipsis 동작 */
+}
+/* 출석/지각/조퇴/외출/결석: 균등 */
+.ckj-stu-list th:nth-child(n + 3),
+.ckj-stu-list td:nth-child(n + 3) {
+  width: 48px;
+  text-align: center;
+}
+
+.ckj-stu-list thead th {
+  background-color: var(--color-gray-th);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: center;
+  padding: 6px 4px;
+  white-space: nowrap;
+}
+
+/* 출석관리 좌측 action-section: 탭 + 검색행 2행 구조 (테이블 시작 위치 표준화용) */
+.ckj-att-left-action {
+  flex-direction: column;
+  align-items: stretch;
+  min-height: auto; /* 2행 허용 */
+}
+
+.ckj-att-left-action .ckj-inst-tab {
+  margin-bottom: 4px;
+}
+
+/* 출석관리 검색+수업일수 한 줄 배치 (attendanceView.jsp 전용 클래스) */
+.ckj-att-search-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  padding: 8px 4px;
+  gap: 8px;
+}
+
+.ckj-section-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 출석관리 오른쪽: 저장/취소 + 날짜 그룹 */
+.ckj-att-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.ckj-att-date-group {
+  display: flex;
+  align-items: flex-end;
+  padding: 8px 4px;
+  gap: 4px;
+}
+
+.ckj-attendance-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100px; /* 출석 테이블 로딩 전 Reserved Space */
+}
+
+.ckj-content-attendance {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* 번호: 최소 너비 */
+.ckj-content-attendance th:nth-child(1),
+.ckj-content-attendance td:nth-child(1) {
+  width: 40px;
+  text-align: center;
+}
+/* 학생명: text-overflow 처리 */
+.ckj-content-attendance td:nth-child(2) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
+}
+/* 미확인~저장: 균등 */
+.ckj-content-attendance th:nth-child(n + 3),
+.ckj-content-attendance td:nth-child(n + 3) {
+  width: 52px;
+  text-align: center;
+}
+
+.ckj-content-attendance thead th {
+  background-color: var(--color-gray-th);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: center;
+  padding: 6px 4px;
+  white-space: nowrap;
+}
+
+.ckj-content-attendance tbody td {
+  text-align: center;
+  padding: 4px 2px;
+}
+
+/* 낙제 학생 행 disabled */
+.ckj-stu-list tbody tr.ckj-stu-disabled td,
+.ckj-content-attendance tbody tr.ckj-stu-disabled td {
+  opacity: 0.4;
+  pointer-events: none;
+}

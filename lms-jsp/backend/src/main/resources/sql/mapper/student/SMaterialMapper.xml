@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.domain.student.dao.SMaterialDAO">
+
+    <select id="totalCnt"
+            parameterType="kr.happyjob.study.domain.student.model.SMaterialSearchDTO"
+            resultType="int">
+        select count(materials_id)
+        from course_materials cm
+        inner join course co on cm.course_id = co.course_id
+        inner join student_course sc on co.course_id = sc.course_id
+        <where>
+            sc.loginID = #{loginID}
+            <if test="course_id != null and course_id != ''">
+                AND co.course_id = #{course_id}
+            </if>
+        </where>
+    </select>
+
+    <select id="loadStuCourse"
+            resultType="kr.happyjob.study.domain.student.model.SCourseSimpleVO">
+        select sc.course_id
+             , co.title as course_title
+        from student_course sc
+                 inner join course co on sc.course_id = co.course_id
+        where sc.loginID = #{loginID}
+    </select>
+
+    <select id="loadMaterials" parameterType="kr.happyjob.study.domain.student.model.SMaterialSearchDTO"
+            resultType="kr.happyjob.study.domain.student.model.SMaterialVO">
+        select cm.materials_id as materials_id
+        , cm.title
+        , co.title AS course_title
+        , cm.content
+        , register_date
+        , update_date
+        , cm.course_id
+        , cm.file_id
+        , fl.name as file_name
+        from course_materials cm
+        inner join course co on cm.course_id = co.course_id
+        inner join student_course sc on co.course_id = sc.course_id
+        inner join file fl on cm.file_id = fl.file_id
+        <where>
+            sc.loginID = #{loginID}
+            <if test="course_id != null and course_id != ''">
+                AND co.course_id = #{course_id}
+            </if>
+        </where>
+        order by cm.materials_id DESC
+        LIMIT #{start}, #{limit}
+    </select>
+
+</mapper>

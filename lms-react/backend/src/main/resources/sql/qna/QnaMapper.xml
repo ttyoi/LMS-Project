@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.admin.dao.AQnaDAO">
+
+    <select id="selectQnaList"
+            parameterType="map"
+            resultType="kr.happyjob.study.domain.admin.model.AQnaVO">
+        SELECT
+        p.post_id        AS postId,
+        p.title          AS title,
+        p.answer_status  AS answerStatus,
+        p.category_code  AS categoryCode,
+        c.name           AS categoryName,
+        p.loginID        AS loginID,
+        u.name           AS writerName,
+        p.created_at     AS createdAt,
+        p.content        AS content,
+        p.fil_ori_name   AS filOriName,
+        p.fil_sav_name   AS filSavName,
+        p.extends        AS extendsName,
+        p.size           AS size,
+        p.logical_path   AS logicalPath,
+        p.physical_path  AS physicalPath,
+        p.is_deleted     AS isDeleted,
+        p.request_target AS requestTarget,
+        CASE
+        WHEN p.request_target IS NULL OR p.request_target = '' THEN '전체'
+        WHEN u2.user_type = 'A' THEN u2.name
+        WHEN u2.user_type = 'I' THEN CONCAT(u2.name, ' 강사')
+        ELSE u2.name
+        END AS requestTargetName
+        FROM qna_post p
+        JOIN qna_category c ON p.category_code = c.category_code
+        JOIN tb_userinfo u ON p.loginID = u.loginID
+        LEFT JOIN tb_userinfo u2 ON p.request_target = u2.loginID
+        WHERE p.is_deleted = 'N'
+
+        <if test="userType != null and userType != ''">
+            <choose>
+                <when test="userType == 'A'"></when>
+                <when test="userType == 'I'">
+                    AND (
+                    p.request_target = #{loginID}
+                    OR p.request_target IS NULL
+                    OR p.request_target = ''
+                    )
+                </when>
+            </choose>
+        </if>
+
+        <if test="answerStatus != null and answerStatus != ''">
+            AND p.answer_status = #{answerStatus}
+        </if>
+
+        <if test="category != null and category != ''">
+            AND p.category_code = #{category}
+        </if>
+
+        <if test="keyword != null and keyword != ''">
+            AND (p.title LIKE CONCAT('%', #{keyword}, '%')
+            OR  p.content LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+
+        ORDER BY p.created_at DESC
+        LIMIT #{startNum}, #{pageSize}
+    </select>
+
+    <select id="selectQnaListCnt" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM qna_post p
+        WHERE is_deleted = 'N'
+
+        <if test="userType != null and userType == 'I'">
+            AND (
+            p.request_target = #{loginID}
+            OR p.request_target IS NULL
+            OR p.request_target = ''
+            )
+        </if>
+
+        <if test="answerStatus != null and answerStatus != ''">
+            AND p.answer_status = #{answerStatus}
+        </if>
+
+        <if test="category != null and category != ''">
+            AND p.category_code = #{category}
+        </if>
+
+        <if test="keyword != null and keyword != ''">
+            AND (p.title LIKE CONCAT('%', #{keyword}, '%')
+            OR  p.content LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+    </select>
+
+
+
+    <select id="selectQnaDetail" parameterType="int" resultType="kr.happyjob.study.domain.admin.model.AQnaVO">
+        SELECT
+            p.post_id        AS postId, p.title AS title, p.content AS content,
+            p.answer_status  AS answerStatus, p.category_code AS categoryCode,
+            c.name AS categoryName, p.loginID AS loginID, u.name AS writerName,
+            p.created_at AS createdAt, p.updated_at AS updatedAt,
+            p.fil_ori_name AS filOriName, p.fil_sav_name AS filSavName,
+            p.extends AS extendsName, p.size AS size,
+            p.logical_path AS logicalPath, p.physical_path AS physicalPath,
+            p.is_deleted AS isDeleted, p.request_target AS requestTarget,
+            u2.name AS requestTargetName
+        FROM qna_post p
+            JOIN qna_category c ON p.category_code = c.category_code
+            JOIN tb_userinfo u ON p.loginID = u.loginID
+            LEFT JOIN tb_userinfo u2 ON p.request_target = u2.loginID
+        WHERE p.post_id = #{postId} AND p.is_deleted = 'N'
+    </select>
+
+    <insert id="insertQnaPost" parameterType="kr.happyjob.study.domain.admin.model.AQnaVO">
+        INSERT INTO qna_post (title, answer_status, content, is_deleted, created_at, updated_at, category_code, loginID, request_target, fil_ori_name, fil_sav_name, extends, size, logical_path, physical_path)
+        VALUES (#{title}, #{answerStatus}, #{content}, #{isDeleted}, NOW(), NOW(), #{categoryCode}, #{loginID}, #{requestTarget}, #{filOriName}, #{filSavName}, #{extendsName}, #{size}, #{logicalPath}, #{physicalPath})
+    </insert>
+
+    <select id="selectCategoryList" resultType="map">
+        SELECT category_code AS categoryCode, name AS categoryName FROM qna_category
+    </select>
+
+    <update id="deleteQnaPost" parameterType="int">
+        UPDATE qna_post SET is_deleted = 'Y', updated_at = NOW() WHERE post_id = #{postId}
+    </update>
+
+    <update id="updateQnaPost" parameterType="kr.happyjob.study.domain.admin.model.AQnaVO">
+        UPDATE qna_post
+        <set>
+            title = #{title}, content = #{content}, category_code = #{categoryCode},
+            request_target = #{requestTarget}, updated_at = NOW(),
+            <if test="filOriName != null and filOriName != ''">
+                fil_ori_name = #{filOriName}, fil_sav_name = #{filSavName}, `extends` = #{extendsName},
+                size = #{size}, logical_path = #{logicalPath}, physical_path = #{physicalPath},
+            </if>
+        </set>
+        WHERE post_id = #{postId} AND is_deleted = 'N'
+    </update>
+
+  <select id="selectTeacherList" resultType="map">
+    SELECT loginID as id, name
+    FROM tb_userinfo
+    WHERE user_type = 'I'
+      AND name IS NOT NULL
+      AND LENGTH(TRIM(name)) > 0
+  </select>
+
+</mapper>

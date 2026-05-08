@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.instructor.dao.ICourseDAO">
+    <select id="courseList" resultType="kr.happyjob.study.domain.instructor.model.ICourseVO">
+/* 사용자 테이블
+   수강정보 테이블
+   강의정보 테이블
+   */
+        SELECT cour.course_id as course_id
+             , cour.title as title
+             , u.name as inst_name
+             , substr(cour.start_date,1,10) as start_date
+             , substr(cour.end_date,1,10) as end_date
+             , period_diff(LEFT(REPLACE(cour.end_date, '-',''),6),LEFT(REPLACE(cour.start_date, '-',''),6)) as period_cnt
+             , stu_cour.stu_cnt as stu_cnt
+             , cla.people_limit as people_limit
+             , CASE
+                WHEN cour.start_date > CURDATE() THEN 0  ELSE
+                round((IFNULL(cour_att.출석횟수, 0) /
+              (GREATEST(DATEDIFF(IF(cour.end_date &lt; CURDATE(), cour.end_date, CURDATE()), cour.start_date), 1)
+              * IFNULL(stu_cour.stu_cnt, 1))) * 100
+              , 2) END as att_ratio
+             , cla.class_name as class_name
+             , cour.time_code as time_code
+             , cour.sub_prof as sub_prof
+             , cour.class_id as class_id
+             , sub.name as sInst_name
+             , cour.cos_sta_code
+        FROM course cour
+            left join
+        tb_userinfo u
+        on cour.professor = u.loginID
+            left join
+        course_class cla
+        on cour.class_id = cla.class_id
+             left join
+        (SELECT course_id, count(1) as stu_cnt, stu_cou_sta_code
+        FROM student_course
+        WHERE stu_cou_sta_code = 0
+        GROUP BY 1, 3
+        ) stu_cour
+        on stu_cour.course_id = cour.course_id
+            left join
+        (SELECT
+        COUNT(1) as 출석횟수
+        ,course_id
+        FROM course_attendance
+        WHERE att_sta_code = 1
+        AND DAYOFWEEK(date) BETWEEN 2 AND 6
+        GROUP BY 2) cour_att
+        on cour_att.course_id = stu_cour.course_id
+            left join
+        tb_userinfo sub
+        on cour.sub_prof = sub.loginID
+          <where>
+            (cour.professor = #{loginID} OR cour.sub_prof = #{loginID})
+            AND cour.course_isDeleted = 0
+            <if test="(title != null) and (!title.equals(''))">
+              AND cour.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="(search_sdate != null) and (!search_sdate.equals(''))">
+              AND cour.end_date <![CDATA[>=]]> #{search_sdate}
+            </if>
+            <if test="(search_edate != null) and (!search_edate.equals(''))">
+              AND cour.start_date <![CDATA[<=]]> #{search_edate}
+            </if>
+            <if test="(course_class != null) and (!course_class.equals(''))">
+              AND FIND_IN_SET(cla.class_name, #{course_class})
+            </if>
+            <if test="(time_code != null) and (!time_code.equals(''))">
+              AND cour.time_code = #{time_code}
+            </if>
+            <if test="(sub_prof != null) and (!sub_prof.equals(''))">
+              AND cour.sub_prof = #{sub_prof}
+            </if>
+          </where>
+        GROUP BY 1,2,3,4,5,6,7
+        ORDER BY
+        <choose>
+          <when test="oname == 'title'">cour.title</when>
+          <when test="oname == 'start_date'">cour.start_date</when>
+          <when test="oname == 'att_ratio'">att_ratio</when>
+          <otherwise>cour.start_date</otherwise>
+        </choose>
+
+<!--        <choose>-->
+<!--          <when test="order != null and order != ''">-->
+<!--            ${order}-->
+<!--          </when>-->
+<!--          <otherwise>-->
+<!--            DESC-->
+<!--          </otherwise>-->
+<!--        </choose>-->
+
+        <choose>
+          <when test="order == 'ASC'">ASC</when>
+          <otherwise>DESC</otherwise>
+        </choose>
+        , cour.course_id DESC
+          LIMIT #{pageIndex}, #{pageSize}
+      </select>
+    <select id="totalCntCourse" resultType="int">
+      SELECT COUNT(1) AS tot_cnt
+      FROM course cour
+        LEFT JOIN course_class cla ON cour.class_id = cla.class_id
+      <where>
+        (cour.professor = #{loginID}
+        OR cour.sub_prof = #{loginID})
+        AND cour.course_isDeleted = 0
+        <if test="(title != null) and (!title.equals(''))">
+          AND cour.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="(search_sdate != null) and (!search_sdate.equals(''))">
+          AND cour.end_date <![CDATA[>=]]> #{search_sdate}
+        </if>
+        <if test="(search_edate != null) and (!search_edate.equals(''))">
+          AND cour.start_date <![CDATA[<=]]> #{search_edate}
+        </if>
+        <if test="(course_class != null) and (!course_class.equals(''))">
+          AND FIND_IN_SET(cla.class_name, #{course_class})
+        </if>
+        <if test="(time_code != null) and (!time_code.equals(''))">
+          AND cour.time_code = #{time_code}
+        </if>
+        <if test="(sub_prof != null) and (!sub_prof.equals(''))">
+          AND cour.sub_prof = #{sub_prof}
+        </if>
+      </where>
+    </select>
+<!--  강의상세 단건조회  -->
+    <select id="courseDetail" parameterType="java.util.Map" resultType="kr.happyjob.study.domain.instructor.model.ICourseVO">
+        SELECT cour.course_id as course_id
+             , cour.title as title
+             , cour.content as content
+             , u.name as inst_name
+             , cour.start_date as start_date
+             , cour.end_date as end_date
+             , period_diff(LEFT(REPLACE(cour.end_date, '-',''),6),LEFT(REPLACE(cour.start_date, '-',''),6)) as period_cnt
+             , stu_cour.stu_cnt as stu_cnt
+             ,cla.people_limit as people_limit
+          ,round(
+                (IFNULL(cour_att.출석횟수, 0) /
+                (GREATEST(DATEDIFF(CURDATE(), cour.start_date), 1) * IFNULL(stu_cour.stu_cnt, 1))) * 100
+              , 2) as att_ratio
+             ,round((cour_att_per.지각횟수/(22*stu_cour.stu_cnt)),2) as per_ratio
+             ,round((cour_att_abs.결석횟수/(22*stu_cour.stu_cnt)),2) as abs_ratio
+             ,cour_cnt.강의횟수 as cour_cnt
+        FROM course cour
+                 left join
+             tb_userinfo u
+             on cour.professor = u.loginID
+                 left join
+             course_class cla
+             on cour.class_id = cla.class_id
+                 left join
+             (SELECT course_id, count(1) as stu_cnt, stu_cou_sta_code
+              FROM student_course
+              WHERE stu_cou_sta_code = 0
+              GROUP BY 1, 3
+             ) stu_cour
+             on stu_cour.course_id = cour.course_id
+                 left join
+             (SELECT
+                  COUNT(1) as 출석횟수
+                   ,course_id
+              FROM course_attendance
+              WHERE course_id = #{courseId}
+                AND att_sta_code = 1
+                AND DAYOFWEEK(date) BETWEEN 2 AND 6
+              GROUP BY 2) cour_att
+             on cour_att.course_id = stu_cour.course_id
+        left join
+            (SELECT
+                COUNT(1) as 지각횟수
+                ,course_id
+            FROM course_attendance
+            WHERE course_id = #{courseId}
+            AND att_sta_code = 2
+            AND DAYOFWEEK(date) BETWEEN 2 AND 6
+            GROUP BY 2) cour_att_per
+            on cour_att_per.course_id = stu_cour.course_id
+            left join
+            (SELECT
+                COUNT(1) as 결석횟수
+                ,course_id
+            FROM course_attendance
+            WHERE course_id = #{courseId}
+            AND att_sta_code = 0
+            AND DAYOFWEEK(date) BETWEEN 2 AND 6
+            GROUP BY 2) cour_att_abs
+            on cour_att_abs.course_id = stu_cour.course_id
+                 left join
+             (SELECT course_id,
+                     (count(distinct substr(date,1,10))) as 강의횟수
+              FROM course_attendance
+              GROUP BY 1
+             ) cour_cnt
+             on cour_cnt.course_id = cour.course_id
+        WHERE (cour.professor = #{loginID}
+            OR cour.sub_prof = #{loginID})
+        AND cour.course_id = #{courseId}
+        GROUP BY 1,2,3,4,5,6,7
+    </select>
+<!--  주간 강의 일정 조회 (타임라인용) -->
+    <select id="weeklySchedule" parameterType="java.util.Map" resultType="kr.happyjob.study.domain.instructor.model.ICourseVO">
+        SELECT cour.course_id
+             , cour.title
+             , cla.class_name
+             , cour.class_id
+             , cour.time_code
+             , substr(cour.start_date, 1, 10) AS start_date
+             , substr(cour.end_date,   1, 10) AS end_date
+        FROM course cour
+        LEFT JOIN course_class cla ON cour.class_id = cla.class_id
+        WHERE cour.course_isDeleted = 0
+          AND cour.start_date <![CDATA[<=]]> #{weekEnd}
+          AND cour.end_date   <![CDATA[>=]]> #{weekStart}
+        ORDER BY cla.class_name, cour.time_code
+    </select>
+<!--  강의목록 search  -->
+    <select id="searchCourseList" parameterType="java.util.Map" resultType="kr.happyjob.study.domain.instructor.model.ICourseVO">
+        SELECT cour.course_id as course_id
+             , cour.title as title
+             ,u.name as inst_name
+             , substr(cour.start_date,1,10) as start_date
+             , substr(cour.end_date,1,10) as end_date
+             , period_diff(LEFT(REPLACE(cour.end_date, '-',''),6),LEFT(REPLACE(cour.start_date, '-',''),6)) as period_cnt
+             , stu_cour.stu_cnt as stu_cnt
+             , cla.people_limit as people_limit
+             , round((cour_att.출석횟수/(22*stu_cour.stu_cnt)) * 100,2) as att_ratio
+        FROM course cour
+                 left join
+             tb_userinfo u
+             on cour.professor = u.loginID
+                 left join
+             course_class cla
+             on cour.class_id = cla.class_id
+                 left join
+             (SELECT course_id, count(1) as stu_cnt, stu_cou_sta_code
+              FROM student_course
+              WHERE stu_cou_sta_code = 0
+              GROUP BY 1, 3
+             ) stu_cour
+             on stu_cour.course_id = cour.course_id
+                 left join
+             (SELECT
+                  COUNT(1) as 출석횟수
+                   ,course_id
+              FROM course_attendance
+              WHERE att_sta_code = 1
+                AND DAYOFWEEK(date) BETWEEN 2 AND 6
+              GROUP BY 2) cour_att
+             on cour_att.course_id = stu_cour.course_id
+        <where>
+            (cour.professor = #{loginID}
+            OR cour.sub_prof = #{loginID})
+            AND cour.course_isDeleted = 0
+            <if test="(title != null) and (!title.equals(''))">
+                <choose>
+                    <when test="oname eq 'title'.toString()">
+                        and cour.title LIKE CONCAT('%', #{title}, '%')
+                    </when>
+                    <when test="oname eq 'instructor'.toString()">
+                        and u.name LIKE CONCAT('%', #{title}, '%')
+                    </when>
+                    <otherwise>
+                        AND 1=2
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="(search_sdate != null and search_sdate != '') and (search_edate != null and search_edate != '')">
+                <![CDATA[
+                and start_date >= #{search_sdate}
+                and end_date < #{search_edate}
+            ]]>
+            </if>
+        </where>
+        GROUP BY 1,2,3,4,5,6,7
+        ORDER BY start_date desc
+            LIMIT #{pageIndex}, #{pageSize}
+    </select>
+</mapper>

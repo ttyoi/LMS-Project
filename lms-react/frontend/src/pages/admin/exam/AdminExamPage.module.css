@@ -1,0 +1,527 @@
+.section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.title {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto 12px auto;
+  text-align: left;
+}
+
+/* 검색 기준 카드 */
+.filterCard {
+  width: 100%;
+  max-width: 1100px;
+  padding: 16px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/*검색 기준*/
+.filterItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.searchLabel {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/*검색창*/
+.searchRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+/* 검색select */
+.searchSelect {
+  height: 36px;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.searchInput {
+  height: 36px;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* 버튼 */
+.searchButton {
+  height: 36px;
+  padding: 9px 14px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* 강의 목록 테이블 */
+.listTableWrap {
+  width: 100%;
+  max-width: 1100px;
+  padding: 20px;
+  gap: 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  border-radius: 10px;
+}
+
+.listTable {
+  width: 100%;
+  max-width: 900px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  margin-left: 80px;
+  text-align: center;
+}
+
+.listTableHead {
+  background: #f3f4f6;
+}
+
+.listTable th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.listTable td {
+  padding: 14px 16px;
+  font-size: 14px;
+
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.listTable tbody tr:hover {
+  background-color: #f9fafb;
+  transition: 0.15s ease;
+}
+
+.statusApprove {
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.statusReject {
+  color: rgb(248, 57, 57);
+  font-weight: 700;
+}
+
+/* 페이징 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.pageInfo {
+  font-size: 13px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.pageButton {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.pageButton:hover {
+  background: #f3f4f6;
+}
+
+.pageButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.underLine {
+  width: 100%;
+  max-width: 1100px;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 50px;
+  opacity: 0.7;
+  padding: 10px;
+}
+
+/* 시험 문항 */
+.testDetail {
+  width: 100%;
+  max-width: 1100px;
+  background-color: #eef0f3;
+}
+
+.updateBtn {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+.testCard {
+  width: 100%;
+  background-color: #eef0f3;
+  max-height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.testQuestion {
+  width: 90%;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.questNo {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #333;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.content {
+  font-size: 15px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  border: 1px solid #666;
+  padding: 20px 10px;
+  min-height: 80px;
+}
+
+.score {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+  text-align: end;
+}
+
+.score input {
+  width: 60px;
+  margin-left: 6px;
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.optionWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.optionWrapper input[type="text"] {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.option {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 6px;
+  cursor: default;
+  transition: 0.2s;
+}
+
+.correct {
+  background: #e9f7ef;
+  border: 1px solid #2ecc71;
+  font-weight: 600;
+  color: #1e7e34;
+}
+
+/* 문항 수정 */
+.updateQuest {
+  width: 100%;
+  min-height: 80px;
+  max-height: 80px;
+  font-size: 14px;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* 버튼 */
+.btnWrap {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.saveBtn {
+  padding: 8px 16px;
+  margin-right: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: rgb(77, 122, 247);
+  color: white;
+}
+
+.saveBtn:hover {
+  background-color: rgb(49, 103, 250);
+}
+
+.cancelBtn {
+  padding: 8px 16px;
+  margin-right: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #f0ad4e;
+  color: white;
+}
+.cancelBtn:hover {
+  background-color: #ec971f;
+}
+
+.closeBtn {
+  padding: 8px 16px;
+  margin-right: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #d9534f;
+  color: white;
+}
+
+.closeBtn:hover {
+  background-color: #c9302c;
+}
+
+.activeRow {
+  background-color: #eef4ff;
+}
+
+.testInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 20px;
+  border-bottom: 1px solid #e5e5e5;
+  background-color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.infoItem {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: 40px;
+}
+
+.label {
+  font-weight: 600;
+  color: #333;
+}
+
+.value {
+  font-weight: 400;
+  color: #555;
+}
+
+.resetBtn {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resetBtn:hover {
+  background-color: #e0e0e0;
+  border-color: #999;
+}
+
+/* 시험 상세 */
+.testDetailTableWrap {
+  width: 100%;
+  max-width: 1100px;
+  padding: 20px;
+  gap: 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  border-radius: 10px;
+}
+
+.testDetailTable {
+  width: 100%;
+  max-width: 900px;
+  border-collapse: collapse;
+  background: #fff;
+
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  margin-left: 80px;
+  text-align: center;
+}
+
+.testDetailTable th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  border-right: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
+}
+
+.testDetailTable td {
+  padding: 14px 16px;
+  font-size: 14px;
+  border-right: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+/* 시험 상태 동작 버튼 */
+.statusOpenBtn {
+  padding: 8px 16px;
+  margin-right: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: rgb(77, 122, 247);
+  color: white;
+}
+
+.statusOpenBtn:hover {
+  background-color: (49, 103, 250);
+}
+
+.statusCloseBtn {
+  padding: 8px 16px;
+  margin-right: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #d9534f;
+  color: white;
+}
+
+.statusCloseBtn:hover {
+  background-color: #c9302c;
+}
+
+/* 시험 상세 or 시험 문제  */
+.tabWrapSection {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tabWrap {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.tabBtn {
+  padding: 10px 20px;
+  background-color: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: #555;
+  transition: all 0.2s ease;
+}
+
+.tabBtn:not(:last-child) {
+  border-right: 1px solid #ddd;
+}
+
+.tabBtn:hover {
+  background-color: #eaeaea;
+}
+
+.active {
+  background-color: #4a90e2;
+  color: #fff;
+  font-weight: 600;
+}
+
+.tabBtn:active {
+  transform: scale(0.97);
+}

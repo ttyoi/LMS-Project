@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.domain.common.dao.CommonDAO">
+	<select id="attendanceStatusList" resultType="kr.happyjob.study.domain.common.model.AttendanceStatusVO">
+		SELECT att_sta_code, status
+		FROM attendance_status	
+	</select>
+	<select id="courseClassList" resultType="kr.happyjob.study.domain.common.model.CourseClassVO">
+		SELECT class_id, class_name, people_limit, status
+		FROM course_class
+	</select>
+	<select id="courseStatusList" resultType="kr.happyjob.study.domain.common.model.CourseStatusVO">
+		SELECT cos_sta_code, name
+		FROM course_status
+	</select>
+	<select id="courseTimeList" resultType="kr.happyjob.study.domain.common.model.CourseTimeVO">
+		SELECT time_code, start_time, end_time
+		FROM course_time
+	</select>
+	<select id="detailCodeList" resultType="kr.happyjob.study.domain.common.model.DetailCodeVO">
+		SELECT detail_code, group_code, detail_name
+		FROM tb_detail_code
+	</select>
+	<select id="qnaCategoryList" resultType="kr.happyjob.study.domain.common.model.QnaCategoryVO">
+		SELECT category_code, name
+		FROM qna_category
+	</select>
+	<select id="sCourseStatusList" resultType="kr.happyjob.study.domain.common.model.SCourseStatusVO">
+		SELECT stu_cou_sta_code, name
+		FROM student_course_status
+	</select>
+</mapper>

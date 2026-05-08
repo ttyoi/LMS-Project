@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.domain.instructor.dao.IMaterialDAO">
+
+    <select id="totalCnt"
+            parameterType="kr.happyjob.study.domain.instructor.model.IMaterialSearchDTO"
+            resultType="int">
+        select count(materials_id)
+        from course_materials cm
+        inner join course co on cm.course_id = co.course_id
+        <where>
+            (co.professor = #{loginID}
+            OR co.sub_prof = #{loginID})
+            <if test="course_id != '' and course_id != null">
+                AND cm.course_id = #{course_id}
+            </if>
+        </where>
+    </select>
+
+    <select id="loadInstCourse"
+            resultType="kr.happyjob.study.domain.instructor.model.ICourseSimpleVO">
+        select course_id
+             , title as course_title
+        from course
+        where professor = #{loginID}
+            or sub_prof = #{loginID}
+    </select>
+
+    <insert id="insertMaterial"
+            parameterType="kr.happyjob.study.domain.instructor.model.IMaterialVO">
+        insert into course_materials
+        ( title
+        , content
+        , register_date
+        , course_id
+        , file_id)
+        VALUES
+        ( #{title}
+        , #{content}
+        , #{register_date}
+        , #{course_id}
+        , #{file_id})
+    </insert>
+
+    <select id="loadMaterials"
+            parameterType="kr.happyjob.study.domain.instructor.model.IMaterialSearchDTO"
+            resultType="kr.happyjob.study.domain.instructor.model.IMaterialVO">
+        select cm.materials_id as materials_id
+        , cm.title
+        , co.title AS course_title
+        , cm.content
+        , register_date
+        , update_date
+        , cm.course_id
+        , cm.file_id
+        , fl.name as file_name
+        , fl.logical_path    from course_materials cm
+        inner join course co on cm.course_id = co.course_id
+        left join file fl on cm.file_id = fl.file_id
+        <where>
+            (co.professor = #{loginID}
+            OR co.sub_prof = #{loginID})
+            <if test="course_id != null and course_id != ''">
+                AND cm.course_id = #{course_id}
+            </if>
+        </where>
+        order by cm.materials_id DESC
+        Limit #{start}, #{limit}
+    </select>
+
+    <update id="updateMaterial"
+            parameterType="kr.happyjob.study.domain.instructor.model.IMaterialVO">
+        update course_materials
+        set title       = #{title}
+          , content     = #{content}
+          , update_date = #{update_date}
+        where materials_id = #{materials_id}
+    </update>
+
+
+    <delete id="deleteMaterial">
+        delete from course_materials
+        where materials_id = #{materials_id}
+    </delete>
+
+</mapper>

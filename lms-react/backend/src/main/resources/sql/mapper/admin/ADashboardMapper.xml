@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.admin.dao.ADashboardDao">
+
+    <!-- 오늘 시험 조회 select -->
+    <select id="getMonthlyExams"
+            resultType="kr.happyjob.study.domain.admin.model.ADashboard">
+        SELECT
+            ts.course_id AS course_courseId,
+            c.title AS course_title,
+            ts.date AS testSchedule_date,
+            ts.title AS testSchedule_title
+        FROM test_schedule ts
+                 JOIN course c ON ts.course_id = c.course_id
+        WHERE ts.date <![CDATA[ >= ]]> DATE_FORMAT(CURDATE(), '%Y-%m-01')
+          AND ts.date <![CDATA[ < ]]> DATE_ADD(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 1 MONTH)
+        ORDER BY ts.date ASC
+    </select>
+
+
+
+    <select id="getTodayClasses" resultType="kr.happyjob.study.domain.admin.model.ADashboard">
+        SELECT
+            cc.class_id AS courseClass_classId,
+            cc.class_name AS courseClass_className,
+            ct.time_code AS courseTime_timeCode,
+            ct.start_time AS courseTime_startTime,
+            ct.end_time AS courseTime_endTime,
+            c.start_date AS course_startDate,
+            c.end_date AS course_endDate,
+            c.title AS course_title
+        FROM course_class cc
+                 JOIN course c
+                      ON cc.class_id = c.class_id
+                 JOIN course_time ct
+                      ON c.time_code = ct.time_code
+        WHERE CURDATE() BETWEEN c.start_date AND c.end_date
+    </select>
+
+    <!-- 전체 유저 수 -->
+    <select id="getTotalUsers" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_userinfo
+    </select>
+
+    <!-- 학생 수 -->
+    <select id="getStudentCount" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_userinfo
+        WHERE user_type = 'S'
+    </select>
+
+    <!-- 강사 수 -->
+    <select id="getTeacherCount" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_userinfo
+        WHERE user_type = 'i'
+    </select>
+
+    <!-- 이번 달 신규 가입자 수 -->
+    <select id="getNewUsers" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_userinfo
+        WHERE DATE_FORMAT(reg_date, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
+    </select>
+
+    <select id="getRecentNotices" resultType="kr.happyjob.study.domain.admin.model.ADashboard">
+        SELECT
+            notice_id as notice_noticeId,
+            title as notice_title,
+            reg_date as notice_regDate
+        FROM notice
+        WHERE DATE_FORMAT(reg_date, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
+        ORDER BY notice_id DESC
+    </select>
+
+    <select id="getRecentSurveys" resultType="kr.happyjob.study.domain.admin.model.ADashboard">
+    SELECT
+    s.survey_id AS survey_id,
+    s.title AS survey_title,
+    s.view_count AS Survey_viewCount,
+    s.created_at AS survey_createAt
+    FROM survey s
+    WHERE DATE_FORMAT(s.created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+    ORDER BY s.created_at DESC
+    </select>
+
+    <select id="getRecentQnaPosts" resultType="kr.happyjob.study.domain.admin.model.ADashboard">
+    SELECT
+    q.post_id AS qnaPost_postId,
+    q.title AS qnaPost_title,
+    q.answer_status AS qnaPost_answerStatus,
+    q.created_at AS qnaPost_createAt
+    FROM qna_post q
+    WHERE q.answer_status = 'N'
+    AND DATE_FORMAT(q.created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+    ORDER BY q.created_at DESC
+    </select>
+
+</mapper>
+
+

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.admin.dao.AUserDAO">
+    <select id = "selectUserList" parameterType="map" resultType="kr.happyjob.study.domain.admin.model.AUserVO">
+    SELECT
+        loginID
+        ,user_type
+        ,name
+        ,password
+        ,chk_tem_password
+        ,zipcode
+        ,addr1
+        ,addr2
+        ,birthday
+        ,phone
+        ,email
+        ,edu_level
+        ,career
+        ,img_name
+        ,img_logi_path
+        ,img_phy_path
+        ,reg_date
+        ,ret_date
+        ,status
+        ,logicalpath
+    FROM  tb_userinfo
+    WHERE 1 = 1
+        <if test="loginID != null and loginID !=''">
+            AND loginID = #{loginID}
+        </if>
+        <if test="user_type != null and user_type != ''">
+            AND user_type = #{user_type}
+        </if>
+
+        <if test="statusFilter != null and statusFilter != ''">
+            AND status = #{statusFilter}
+        </if>
+
+        <if test="sname != null and sname != '' and searchType != null and searchType != ''">
+            <choose>
+                <when test='searchType == "name"'>
+                    AND name LIKE CONCAT('%', #{sname}, '%')
+                </when>
+
+                <when test='searchType == "regdate"'>
+                    AND DATE_FORMAT(reg_date, '%Y-%m-%d') = #{sname}
+                </when>
+
+                <otherwise>
+                    AND (
+                    name LIKE CONCAT('%', #{sname}, '%')
+                    OR loginID LIKE CONCAT('%', #{sname}, '%')
+                    OR phone LIKE CONCAT('%', #{sname}, '%')
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    ORDER BY reg_date DESC
+    LIMIT #{startNum}, #{pageSize}
+    </select>
+
+
+    <!-- 사용자 수 -->
+    <select id="selectUserListCount" parameterType="map" resultType="int">
+        SELECT count(*)
+        FROM tb_userinfo
+        WHERE 1=1
+        <if test="user_type != null and user_type != ''">
+            AND user_type = #{user_type}
+        </if>
+
+        <if test="statusFilter != null and statusFilter != ''">
+            AND status = #{statusFilter}
+        </if>
+
+        <if test="sname != null and sname != '' and searchType != null and searchType != ''">
+            <choose>
+                <when test='searchType == "name"'>
+                    AND name LIKE CONCAT('%', #{sname}, '%')
+                </when>
+
+                <when test='searchType == "regdate"'>
+                    AND DATE_FORMAT(reg_date, '%Y-%m-%d') = #{sname}
+                </when>
+
+                <otherwise>
+                    AND (
+                    name LIKE CONCAT('%', #{sname}, '%')
+                    OR loginID LIKE CONCAT('%', #{sname}, '%')
+                    OR phone LIKE CONCAT('%', #{sname}, '%')
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </select>
+
+
+    <!-- 유저 상태 업데이트 -->
+    <update id="updateStudentStatus" parameterType="map">
+        UPDATE tb_userinfo
+        SET status = #{status},
+        ret_date = CASE
+                WHEN #{status} = 'Q' THEN NOW()
+                ELSE NULL
+            END
+        WHERE loginID  = #{loginID}
+    </update>
+
+    <!-- 이력서 다운로드 -->
+    <select id="selectResumeByLoginID" parameterType="string" resultType="kr.happyjob.study.domain.admin.model.AResumeVO">
+        select resume_id
+             ,loginID
+             ,name
+             ,logical_path
+             ,physical_path
+             ,extends as extension
+            ,size
+             ,create_at
+        from resume
+        where loginID=#{loginID}
+        order by create_at desc
+    </select>
+
+</mapper>

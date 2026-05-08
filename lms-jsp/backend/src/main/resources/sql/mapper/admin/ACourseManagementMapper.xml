@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.mapper.admin.ACourseManagementMapper">
+
+    <!-- 강의 목록 조회 (강의상태 포함) -->
+    <select id="selectCourseList"
+            resultType="kr.happyjob.study.domain.admin.model.courseManagement.CourseManagement">
+        SELECT
+            c.course_id,
+            c.title,
+            u.name,                 -- 강사 이름
+            c.class_id,
+            cc.class_name,
+            c.start_date,
+            c.end_date,
+            c.cos_sta_code
+        FROM course c
+                 LEFT JOIN course_class cc
+                           ON c.class_id = cc.class_id
+                 LEFT JOIN tb_userinfo u
+                           ON c.professor = u.loginID
+        ORDER BY c.course_id DESC
+    </select>
+
+    <select id="selectCourseListPaging"
+            parameterType="map"
+            resultType="kr.happyjob.study.domain.admin.model.courseManagement.CourseManagement">
+        SELECT
+        c.course_id,
+        c.title,
+        u.name,
+        c.class_id,
+        cc.class_name,
+        c.start_date,
+        c.end_date,
+        c.cos_sta_code
+        FROM course c
+        LEFT JOIN course_class cc ON c.class_id = cc.class_id
+        LEFT JOIN tb_userinfo u ON c.professor = u.loginID
+        <where>
+            <if test="cos_sta_code != null and cos_sta_code != 'all'">
+                AND c.cos_sta_code = #{cos_sta_code}
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                <choose>
+                    <when test="searchType == 'instructor'"> AND u.name LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+                    <when test="searchType == 'course'"> AND c.title LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+                    <otherwise>
+                        AND (u.name LIKE CONCAT('%', #{searchKeyword}, '%') OR c.title LIKE CONCAT('%', #{searchKeyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        ORDER BY c.course_id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countCourses" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM course c
+        LEFT JOIN tb_userinfo u ON c.professor = u.loginID
+        <where>
+            <if test="cos_sta_code != null and cos_sta_code != 'all'">
+                AND c.cos_sta_code = #{cos_sta_code}
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                <choose>
+                    <when test="searchType == 'instructor'"> AND u.name LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+                    <when test="searchType == 'course'"> AND c.title LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+                    <otherwise>
+                        AND (u.name LIKE CONCAT('%', #{searchKeyword}, '%') OR c.title LIKE CONCAT('%', #{searchKeyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <!-- 강의 상세 조회 -->
+    <select id="selectCourseDetail"
+            parameterType="int"
+            resultType="kr.happyjob.study.domain.admin.model.courseManagement.CourseManagement">
+        SELECT
+            c.course_id,
+            c.title,
+
+            p.name  AS name,               -- 강사명
+            sp.name AS subName,            -- 보조강사명
+
+            c.professor,                  -- (loginID, 수정용)
+            c.sub_prof,                   -- (loginID, 수정용)
+
+            c.class_id,
+            cc.class_name,
+            c.start_date,
+            c.end_date,
+            c.content,
+            c.notice,
+            c.plan,
+            c.cos_sta_code,
+            c.time_code,
+            ct.start_time,
+            ct.end_time,
+            ts.status AS status
+        FROM course c
+                 LEFT JOIN course_class cc ON c.class_id = cc.class_id
+                 LEFT JOIN course_time ct ON c.time_code = ct.time_code
+                 LEFT JOIN test_schedule ts ON c.course_id = ts.course_id
+
+                 LEFT JOIN tb_userinfo p  ON c.professor = p.loginID
+                 LEFT JOIN tb_userinfo sp ON c.sub_prof  = sp.loginID
+
+        WHERE c.course_id = #{courseId}
+    </select>
+
+
+
+    <!-- 강의 정보 수정 -->
+    <update id="updateCourse" parameterType="kr.happyjob.study.domain.admin.model.courseManagement.CourseManagement">
+        UPDATE course
+        SET
+            title = #{title},
+            professor = #{professor},
+            sub_prof = #{sub_prof},
+            class_id = #{class_id},
+            start_date = #{start_date},
+            end_date = #{end_date},
+            content = #{content},
+            notice = #{notice},
+            plan = #{plan},
+            time_code = #{time_code}
+        WHERE course_id = #{course_id}
+    </update>
+
+    <!-- 강의 삭제 -->
+    <delete id="deleteCourse" parameterType="int">
+        DELETE FROM course
+        WHERE course_id = #{course_id}
+    </delete>
+
+    <!-- 강의신청 상태 변경 (승인/거절/취소) -->
+    <update id="updateCourseStatus" parameterType="map">
+        UPDATE course
+        SET cos_sta_code = #{cos_sta_code}
+        WHERE course_id = #{course_id}
+    </update>
+
+</mapper>

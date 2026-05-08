@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.mapper.admin.ACourseClassMapper">
+
+    <select id="listClassrooms" parameterType="string" resultType="map">
+        SELECT
+        cc.class_id,
+        cc.class_name,
+        cc.people_limit,
+        cc.status,
+        IFNULL(t.start_time, '') AS start_time,
+        IFNULL(t.end_time, '') AS end_time,
+        IFNULL(c.title, '배정없음') AS title,
+        IFNULL(c.start_date, '') AS start_date,
+        IFNULL(c.end_date, '') AS end_date,
+        IFNULL(c.course_id, '') AS course_id,
+        IFNULL(u1.name, '-') AS professor_name,
+        IFNULL(u2.name, '-') AS sub_prof_name
+        FROM course_class cc
+        LEFT JOIN course c ON cc.class_id = c.class_id
+        LEFT JOIN course_time t ON c.time_code = t.time_code
+        LEFT JOIN tb_userinfo u1 ON c.professor = u1.loginID
+        LEFT JOIN tb_userinfo u2 ON c.sub_prof = u2.loginID
+        <where>
+            AND cc.class_name IN (
+            SELECT DISTINCT inner_cc.class_name
+            FROM course_class inner_cc
+            WHERE inner_cc.status = 1
+            )
+            <if test="_parameter != null and _parameter != ''">
+                AND cc.class_name LIKE CONCAT('%', #{_parameter}, '%')
+            </if>
+        </where>
+        ORDER BY cc.class_name ASC, t.start_time ASC
+    </select>
+
+
+    <select id="listClassroomsPaging"
+            parameterType="map"
+            resultType="kr.happyjob.study.domain.admin.model.courseClass.CourseClass">
+        SELECT class_id, class_name, people_limit, status
+        FROM course_class
+        <where>
+            <if test="search != null and search != ''">
+                AND class_name LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </where>
+        ORDER BY class_id
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countClassrooms" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM course_class
+        <where>
+            <if test="search != null and search != ''">
+                AND class_name LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </where>
+    </select>
+
+
+
+
+    <insert id="insertClassroom">
+        INSERT INTO course_class(class_name, people_limit, status)
+        VALUES(#{class_name}, #{people_limit}, #{status})
+    </insert>
+
+    <update id="updateClassroom">
+        UPDATE course
+        SET
+            start_date = #{start_date},
+            end_date = #{end_date}
+        WHERE course_id = #{course_id}
+    </update>
+
+    <update id="updateClassroomInfo" parameterType="map">
+        UPDATE course_class
+        SET class_name = #{class_name},
+            people_limit = #{people_limit},
+            status = #{status}
+        WHERE class_id = #{class_id}
+    </update>
+
+    <update id="deleteClassroomByName">
+        UPDATE course_class
+        SET status = 0
+        WHERE class_name = #{class_name}
+    </update>
+
+
+    <select id="detailClassroomByName" parameterType="string" resultType="map">
+        SELECT
+            c.course_id,
+            cc.class_id,
+            cc.class_name,
+            cc.people_limit,
+            t.start_time,
+            t.end_time,
+            c.title,
+            c.start_date,
+            c.end_date,
+            u1.name AS professor_name,
+            u2.name AS sub_prof_name
+        FROM course_class cc
+                 LEFT JOIN course c ON cc.class_id = c.class_id
+                 LEFT JOIN course_time t ON c.time_code = t.time_code
+                 LEFT JOIN tb_userinfo u1 ON c.professor = u1.loginID
+                 LEFT JOIN tb_userinfo u2 ON c.sub_prof = u2.loginID
+        WHERE cc.class_name = #{className}
+        ORDER BY t.start_time
+    </select>
+
+
+
+
+
+</mapper>

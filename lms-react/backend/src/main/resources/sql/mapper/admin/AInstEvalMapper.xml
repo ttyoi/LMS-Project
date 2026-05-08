@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.admin.dao.AInstEvalDAO">
+    <!-- 1명 조회  - 개인-->
+    <select id="seletInstEval" parameterType="string" resultType="kr.happyjob.study.domain.admin.model.AInstEvalVO">
+        select loginID, content
+        from instructor_evaluation
+        where loginID = #{loginID}
+    </select>
+
+    <!-- 강사 평가 넣기 -->
+   <insert id="insertInstEval" parameterType="kr.happyjob.study.domain.admin.model.AInstEvalVO" useGeneratedKeys="true" keyProperty="evaluation_id">
+        insert into instructor_evaluation (loginID, content)
+        values (#{loginID}, #{content})
+    </insert>
+
+    <!-- 강사평가 수정 -->
+    <update id="updateInstEval" parameterType="kr.happyjob.study.domain.admin.model.AInstEvalVO">
+        update instructor_evaluation
+        set content=#{content}
+        where loginID = #{loginID}
+    </update>
+</mapper>

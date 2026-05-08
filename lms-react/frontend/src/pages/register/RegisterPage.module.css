@@ -1,0 +1,238 @@
+/* 회원가입 페이지 */
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a3c5e 0%, #2d6a9f 100%);
+  padding: 40px 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 50px; /* 좌우 패딩을 조금 더 넓힘 */
+  width: 100%;
+  max-width: 550px; /* 가로 배치를 위해 폼을 조금 더 넓게 설정 */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a3c5e;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #888;
+  margin: 0;
+}
+
+.guideBox {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #eef5fb;
+  color: #315372;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.loadingBox {
+  padding: 40px 20px;
+  border-radius: 8px;
+  background: #f5f8fb;
+  color: #47627f;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 각 필드 사이 간격 */
+}
+
+/* 🔥 핵심: 라벨과 인풋창 가로 배치 */
+.field {
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+}
+
+.addressField {
+  align-items: flex-start;
+}
+
+/* 🔥 라벨 너비 고정하여 줄 맞추기 */
+.label {
+  width: 110px; /* 라벨 넓이 고정 */
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  flex-shrink: 0; /* 라벨 영역이 찌그러지지 않게 방지 */
+}
+
+.birthdayLabel {
+  width: auto;
+  margin: 0 10px;
+}
+
+.addressLabel {
+  margin-top: 12px;
+}
+
+.required::after {
+  content: "*"; /* 별표 문구 추가 */
+  color: #e53e3e; /* 빨간색상 (이미 정의하신 error 색상과 맞춤) */
+  position: absolute;
+  margin-left: 3px;
+}
+
+/* 입력 영역 래퍼 (인풋창들이 남은 공간을 차지하도록) */
+.inputWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column; /* 인풋창과 에러메시지가 위아래로 뜨게 */
+}
+
+/* 일반 인풋 */
+.input {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  transition: border-color 0.2s;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.centeredInput {
+  text-align: center;
+}
+
+.nameInput {
+  width: 140px;
+  text-align: center;
+}
+
+.input:focus {
+  border-color: #2d6a9f;
+  box-shadow: 0 0 0 3px rgba(45, 106, 159, 0.1);
+}
+
+.readOnlyInput {
+  background: #f3f5f8;
+  color: #67778a;
+}
+
+/* 아이디 + 중복확인 버튼 영역 */
+.inputWithBtn {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.inputWithBtn .input {
+  flex: 1;
+}
+
+.feedback {
+  margin-top: 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.feedbackError {
+  color: #e53e3e;
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+}
+
+.feedbackSuccess {
+  color: #0f5132;
+  background: #d1e7dd;
+  border: 1px solid #badbcc;
+}
+
+/* 에러 메시지 */
+.error {
+  font-size: 13px;
+  color: #e53e3e;
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 6px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+/* 성공 메시지 */
+.success {
+  width: 100%; /* 🔥 가로로 꽉 차게 */
+  box-sizing: border-box; /* 🔥 패딩을 포함해서 너비 계산 */
+  font-size: 13px;
+  color: #0f5132;
+  background: #d1e7dd;
+  border: 1px solid #badbcc;
+  border-radius: 6px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+/* 하단 회원가입 버튼 */
+.button {
+  padding: 16px;
+  background: #1a3c5e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  background: #2d6a9f;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 푸터 (로그인으로 돌아가기 링크) */
+.footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  color: #2d6a9f;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.linkBtn:hover {
+  text-decoration: underline;
+  color: #1a3c5e;
+}

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.notice.dao.NoticeNewDao">
+    <!-- 공지사항 리스트 -->
+    <select id="findNoticeList" parameterType="map" resultType="kr.happyjob.study.domain.notice.model.NoticeNewVO">
+        SELECT notice_id
+        , loginID
+        , title
+        , user
+        , content
+        , reg_date
+        , view_count
+        FROM notice
+        <where>
+            <if test="sname != null and sname !=''">
+                <choose>
+                    <when test="searchType == 'title'">
+                        AND title LIKE concat('%',#{sname}, '%')
+                    </when>
+                    <when test="searchType == 'content'">
+                        AND content LIKE concat('%',#{sname}, '%')
+                    </when>
+                    <otherwise>
+                        AND (title LIKE concat('%', #{sname}, '%')
+                        OR content LIKE concat('%', #{sname}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+
+        ORDER BY reg_date
+        <choose>
+            <when test="orderType == 'ASC'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+
+        LIMIT #{startNum}, #{pageSize}
+    </select>
+
+    <!-- 공지사항 상세 조회 -->
+    <select id="findNoticeDetail" parameterType="int" resultType="kr.happyjob.study.domain.notice.model.NoticeNewVO">
+        SELECT notice_id, loginID, title, user, content, reg_date, view_count
+        FROM notice
+        WHERE notice_id = #{noticeId}
+    </select>
+
+    <!-- 공지사항 개수 -->
+    <select id="countNotice" parameterType="map" resultType="int">
+        select count(*)
+        from notice
+        <where>
+            <if test="sname != null and sname !=''">
+                <choose>
+                    <when test="searchType == 'title'">
+                        AND title LIKE concat('%',#{sname}, '%')
+                    </when>
+                    <when test="searchType == 'content'">
+                        AND content LIKE concat('%',#{sname}, '%')
+                    </when>
+                    <otherwise>
+                        AND (title LIKE concat('%', #{sname}, '%')
+                        OR content LIKE concat('%', #{sname}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <!-- 수정 -->
+    <update id="updateNoticeContent" parameterType="map">
+        UPDATE notice
+        SET title   = #{title},
+            content = #{content}
+        WHERE notice_id = #{noticeId}
+    </update>
+
+    <!-- 새글등록  - MySQL: NOW() / Oracle: sysdate-->
+    <insert id="insertNotice" parameterType="map">
+        insert into notice ( loginID
+                           , title
+                           , user
+                           , content
+                           , reg_date
+                           , view_count)
+        values ( #{loginID}
+               , #{title}
+               , '관리자'
+               , #{content}
+               , NOW()
+               , 0)
+    </insert>
+
+    <!-- 삭제 -->
+    <delete id="deleteNotice" parameterType="int">
+        delete
+        from notice
+        where notice_id = #{noticeId}
+    </delete>
+
+    <!-- 조회수 -->
+    <update id="noticeViewCount" parameterType="int">
+        update notice
+        set view_count = view_count + 1
+        where notice_id = #{noticeID}
+    </update>
+
+    <!-- 대쉬보드용 조회 -->
+    <select id="dashboardNoticeList" parameterType="hashmap" resultType="kr.happyjob.study.system.model.NoticeModel">
+        SELECT n.notice_id                         AS noticeNo
+             , n.title                             AS noticeTitle
+             , DATE_FORMAT(n.reg_date, '%Y-%m-%d') AS noticeRegdate
+             , n.loginID                           AS loginId
+             , n.user                              AS loginName
+        FROM notice n
+        ORDER BY n.reg_date DESC LIMIT #{limitCount}
+    </select>
+
+</mapper>

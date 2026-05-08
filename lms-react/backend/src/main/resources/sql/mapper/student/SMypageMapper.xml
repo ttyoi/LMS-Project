@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.domain.student.dao.SMypageDAO">
+
+    <resultMap id="studentMypageMap" type="kr.happyjob.study.domain.student.model.SMypageVO">
+        <result property="loginID"      column="loginID"/>
+        <result property="userType"     column="userType"/>
+        <result property="name"         column="name"/>
+        <result property="phone"        column="phone"/>
+        <result property="email"        column="email"/>
+        <result property="birthday"     column="birthday"/>
+        <result property="zipcode"      column="zipcode"/>
+        <result property="addr1"        column="addr1"/>
+        <result property="addr2"        column="addr2"/>
+
+        <result property="imgName"      column="imgName"/>
+        <result property="imgLogiPath"  column="imgLogiPath"/>
+        <result property="imgPhyPath"   column="imgPhyPath"/>
+
+        <result property="resumeId"     column="resumeId"/>
+        <result property="resumeName"   column="resumeName"/>
+
+        <result property="chkTemPassword" column="chk_tem_password"/>
+    </resultMap>
+
+    <select id="getStudentMypage" resultMap="studentMypageMap">
+        SELECT
+            u.loginID       AS loginID,
+            u.user_type     AS userType,
+            u.name          AS name,
+            u.phone         AS phone,
+            u.email         AS email,
+            u.birthday      AS birthday,
+            u.zipcode       AS zipcode,
+            u.addr1         AS addr1,
+            u.addr2         AS addr2,
+            u.img_name      AS imgName,
+            u.img_logi_path AS imgLogiPath,
+            u.img_phy_path  AS imgPhyPath,
+
+            r.resume_id     AS resumeId,
+            r.name   AS resumeName,
+
+            u.chk_tem_password AS chk_Tem_Password
+
+        FROM tb_userinfo u
+                 LEFT JOIN resume r ON u.loginID = r.loginID
+        WHERE u.loginID = #{loginID}
+        ORDER BY r.resume_id DESC
+        LIMIT 1
+    </select>
+
+    <update id="updateStudentMypage" parameterType="kr.happyjob.study.domain.student.model.SMypageUpdateDTO">
+        UPDATE tb_userinfo
+        <set>
+            phone = #{phone},
+            email = #{email},
+            birthday = #{birthday},
+            zipcode = #{zipcode},
+            addr1 = #{addr1},
+            addr2 = #{addr2},
+        </set>
+
+        WHERE loginID = #{loginID}
+    </update>
+
+    <update id="changePassword" parameterType="kr.happyjob.study.domain.student.model.MypagePasswordChangeParamDTO">
+        UPDATE tb_userinfo
+        SET password = #{newPw}
+        WHERE loginID = #{loginID}
+    </update>
+
+    <select id="checkOldPassword" parameterType="kr.happyjob.study.domain.student.model.MypagePasswordChangeParamDTO" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_userinfo
+        WHERE loginID = #{loginID}
+            AND password = #{oldPw}
+    </select>
+
+    <select id="getStudentCourseStatusCards" parameterType="string" resultType="hashmap">
+        SELECT
+            c.course_id AS courseId,
+            c.title AS title,
+            IFNULL(inst.name, '') AS instructorName,
+            IFNULL(cc.class_name, '') AS className,
+            DATE_FORMAT(c.start_date, '%Y-%m-%d') AS startDate,
+            DATE_FORMAT(c.end_date, '%Y-%m-%d') AS endDate,
+            TIME_FORMAT(ct.start_time, '%H:%i') AS startTime,
+            TIME_FORMAT(ct.end_time, '%H:%i') AS endTime
+        FROM student_course sc
+                 INNER JOIN course c ON sc.course_id = c.course_id
+                 LEFT JOIN tb_userinfo inst ON c.professor = inst.loginID
+                 LEFT JOIN course_class cc ON c.class_id = cc.class_id
+                 LEFT JOIN course_time ct ON c.time_code = ct.time_code
+        WHERE sc.loginID = #{loginID}
+          AND c.course_isDeleted = 0
+        ORDER BY c.start_date DESC, c.course_id DESC
+    </select>
+
+    <update id="updateTempPasswordFlag" parameterType="string">
+        UPDATE tb_userinfo
+        SET chk_tem_password = 'N'
+        WHERE loginID = #{loginID}
+    </update>
+
+    <update id ="updateProfileImage"
+            parameterType="kr.happyjob.study.domain.student.model.MypageProfileUpdateParamDTO">
+        UPDATE tb_userinfo
+        SET
+            img_name = #{imgName},
+            img_logi_path = #{imgLogiPath},
+            img_phy_path = #{imgPhyPath}
+        WHERE loginID = #{loginID}
+    </update>
+
+    <insert id="insertResume"
+            parameterType="kr.happyjob.study.domain.student.model.MypageResumeInsertParamDTO"
+            useGeneratedKeys="true"
+            keyProperty="resumeId">
+        INSERT INTO resume
+        (
+            loginID,
+            name,
+            logical_path,
+            physical_path,
+            extends,
+            size,
+            create_at
+        )
+        VALUES
+        (
+            #{loginID},
+            #{name},
+            #{logicalPath},
+            #{physicalPath},
+            #{extend},
+            #{size},
+            NOW()
+        )
+    </insert>
+
+    <delete id="deleteResumeByLoginId">
+        DELETE FROM resume WHERE loginID = #{loginID}
+    </delete>
+
+    <select id="getStudentCourseStatus"
+            parameterType="kr.happyjob.study.domain.student.model.SMypageCourseStatusParamDTO"
+            resultType="kr.happyjob.study.domain.student.model.SMypageCourseStatusVO">
+
+        SELECT
+            c.course_id AS courseId,
+            c.title AS courseName,
+            sc.stu_cou_sta_code AS courseStatusCode,
+            cs.name AS courseStatusName,
+            student_table.studentScore,
+            student_table.myAvgScore
+
+        FROM student_course sc
+                 JOIN course c
+                      ON sc.course_id = c.course_id
+                 LEFT JOIN student_course_status cs
+                           ON sc.stu_cou_sta_code = cs.stu_cou_sta_code
+
+                 LEFT JOIN (
+            SELECT
+                td.course_id,
+                SUM(
+                        CASE WHEN sta.student_answer = td.answer THEN td.score ELSE 0 END
+                ) AS studentScore,
+                SUM(
+                        CASE WHEN sta.student_answer = td.answer THEN td.score ELSE 0 END
+                ) AS myAvgScore
+            FROM test_detail td
+                     LEFT JOIN student_test_answer sta
+                               ON sta.course_id = td.course_id
+                                   AND sta.period = td.period
+                                   AND sta.question_no = td.question_no
+                                   AND sta.loginID = #{loginID}
+            GROUP BY td.course_id
+        ) student_table ON student_table.course_id = sc.course_id
+
+
+        WHERE sc.loginID = #{loginID}
+        ORDER BY c.start_date DESC
+
+    </select>
+
+
+
+
+    <select id="getCoursePeriodScores"
+            parameterType="map"
+            resultType="kr.happyjob.study.domain.student.model.SMypagePeriodScoreVO">
+
+        SELECT
+            td.period AS period,
+            SUM(td.score) AS totalScore,
+            SUM(CASE WHEN sta.student_answer = td.answer THEN td.score ELSE 0 END) AS studentScore
+        FROM test_detail td
+                 LEFT JOIN student_test_answer sta
+                           ON sta.course_id = td.course_id
+                               AND sta.period = td.period
+                               AND sta.question_no = td.question_no
+                               AND sta.loginID = #{loginID}
+        WHERE td.course_id = #{courseId}
+        GROUP BY td.period
+        ORDER BY td.period ASC;
+    </select>
+
+
+
+    <select id="getResumeByLoginId"
+            parameterType="string"
+            resultType="kr.happyjob.study.domain.student.model.MypageResumeVO">
+        SELECT
+            resume_id AS resumeId,
+            loginID,
+            name,
+            logical_path AS logicalPath,
+            physical_path AS physicalPath,
+            extends,
+            size
+        FROM resume
+        WHERE loginID = #{loginID}
+        ORDER BY resume_id DESC
+        LIMIT 1
+    </select>
+
+    <select id="getResumeById"
+            parameterType="long"
+            resultType="kr.happyjob.study.domain.student.model.MypageResumeVO">
+        SELECT
+            resume_id AS resumeId,
+            loginID,
+            name,
+            logical_path AS logicalPath,
+            physical_path AS physicalPath,
+            extends,
+            size
+        FROM resume
+        WHERE resume_id = #{resumeId}
+    </select>
+
+
+</mapper>

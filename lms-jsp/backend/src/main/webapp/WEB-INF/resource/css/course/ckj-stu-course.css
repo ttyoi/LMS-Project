@@ -1,0 +1,169 @@
+@charset "UTF-8";
+
+/*======================================= .ckj-right 영역 =======================================*/
+.ckj-stu-my-course {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--color-gray-light);
+  font-size: 14px;
+}
+
+.ckj-stu-my-course > div:first-child {
+  font-weight: 500;
+  color: #333;
+}
+
+.ckj-stu-attendance {
+  display: flex;
+  gap: 12px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  background-color: var(--color-primary-bright);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.ckj-stu-attendance > div {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.ckj-stu-attendance > div > span:first-child {
+  color: var(--color-gray-dark);
+}
+
+.ckj-stu-attendance > div > span:last-child {
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+/*======================================= 행 선택 =======================================*/
+#inst-course tr.is-selected td {
+  background-color: var(--color-primary-light);
+}
+
+/*======================================= 달력 =======================================*/
+.ckj-calendar-table {
+  width: 100%;
+  border: 1px solid var(--color-gray-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ckj-calendar-table table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.ckj-calendar-table th {
+  text-align: center;
+  padding: 6px 4px;
+  background-color: var(--color-gray-th);
+  font-size: 12px;
+}
+
+.ckj-calendar-table td {
+  text-align: center;
+  padding: 4px;
+  vertical-align: top;
+  height: 60px;
+  font-size: 11px;
+}
+
+/* 달력 내 출결 뱃지 */
+.ckj-att-badge {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.ckj-att-badge.present   { background-color: #b5e4ea; color: #1a5c63; } /* 출석 */
+.ckj-att-badge.late      { background-color: #fcf0d6; color: #7a5a1e; } /* 지각 */
+.ckj-att-badge.early     { background-color: #fcf0d6; color: #7a5a1e; } /* 조퇴 */
+.ckj-att-badge.out       { background-color: #fcf0d6; color: #7a5a1e; } /* 외출 */
+.ckj-att-badge.absent    { background-color: #feafab; color: #8b2020; } /* 결석 */
+.ckj-att-badge.unconfirmed { background-color: var(--color-gray-bright); color: #666; } /* 미확인 */
+
+/* 달력 셀 내부 요소 */
+.ckj-cal-day {
+  display: block;
+  text-align: right;
+  font-size: 11px;
+  color: #333;
+  margin-bottom: 2px;
+}
+.ckj-cal-sun .ckj-cal-day { color: #ce0018; }
+.ckj-cal-sat .ckj-cal-day { color: #0067a3; }
+
+.ckj-cal-event {
+  display: block;
+  font-size: 10px;
+  border-radius: 2px;
+  padding: 1px 3px;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+  background-color: var(--color-primary-light); /* 시각적 구분 (이전: 없음) */
+  color: var(--color-primary-darker);
+}
+
+/* 오늘 날짜 셀 강조 */
+.ckj-cal-today {
+  background-color: var(--color-primary-bright);
+}
+
+.ckj-cal-today .ckj-cal-day {
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+/* 달력 min-height: Reserved Space — 로딩 전 layout shift 방지 */
+.ckj-calendar-table {
+  min-height: 180px;
+}
+
+/*======================================= 수강 상태 배지 =======================================*/
+.ckj-status-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1;
+}
+
+.ckj-status-badge.open {
+  background-color: #fff7ed;
+  color: #9a3412;
+}
+
+.ckj-status-badge.applied {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.ckj-status-badge.full {
+  background-color: var(--color-gray-light);
+  color: #555;
+}
+
+.ckj-status-badge.ended {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+/* 행 선택 시 학생 강의 */
+#inst-course tr:hover td {
+  cursor: pointer;
+}

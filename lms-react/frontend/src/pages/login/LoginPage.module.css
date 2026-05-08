@@ -1,0 +1,202 @@
+/* 로그인 페이지 */
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a3c5e 0%, #2d6a9f 100%);
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a3c5e;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #888;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.input {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #2d6a9f;
+  box-shadow: 0 0 0 3px rgba(45, 106, 159, 0.1);
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: -4px;
+  margin-bottom: 4px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #495057;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  margin-right: 4px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+.error {
+  font-size: 13px;
+  color: #e53e3e;
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
+.button {
+  margin-top: 8px;
+  padding: 14px;
+  background: #1a3c5e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  background: #2d6a9f;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 하단 링크 */
+.links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.link {
+  font-size: 14px;
+  color: #2d6a9f;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+  color: #1a3c5e;
+}
+
+.divider {
+  font-size: 12px;
+  color: #ccc;
+}
+
+/* 개발용 빠른 로그인 */
+.mockSection {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed #ddd;
+}
+
+.mockLabel {
+  font-size: 11px;
+  color: #aaa;
+  text-align: center;
+  margin: 0 0 10px;
+  letter-spacing: 0.3px;
+}
+
+.mockButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.mockBtn {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.mockBtn:hover {
+  opacity: 0.8;
+}
+
+.mockBtnAdmin {
+  background: #e8f0fe;
+  color: #1a3c5e;
+}
+
+.mockBtnInst {
+  background: #e6f4ea;
+  color: #1e6b3c;
+}
+
+.mockBtnStu {
+  background: #fef3e2;
+  color: #7c4a00;
+}

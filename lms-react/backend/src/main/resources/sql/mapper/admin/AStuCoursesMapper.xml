@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.admin.dao.AUserCoursesListDAO">
+    <select id="selectUserCoursesList" parameterType="string" resultType="kr.happyjob.study.domain.admin.model.AUserCoursesListVO">
+        select co.course_id /* course */
+             , co.title /* course */
+             , cc.class_name
+             , tu.name /* tb_userinfo -> proffesor */
+             , scs.name  as scs_name/* 수강상태 student_course_status*/
+             , co.start_date
+             , co.end_date
+        from student_course sc
+            inner join course co on sc.course_id = co.course_id
+            inner join course_class  cc ON co.class_id = cc.class_id
+            inner join tb_userinfo tu on tu.loginId = co.professor
+            inner join student_course_status scs on scs.stu_cou_sta_code = sc.stu_cou_sta_code
+        where sc.loginID = #{loginID}
+        order by sc.stu_cou_sta_code asc
+    </select>
+
+
+    <!-- 강사용 강의 리스트 + 수강생 수 -->
+    <select id="selectInstCourses"
+            parameterType="string"
+            resultType="kr.happyjob.study.domain.admin.model.AUserCoursesListVO">
+
+        SELECT
+            co.course_id
+             , co.title
+             , cc.class_name
+             , co.start_date
+             , co.end_date
+             , COALESCE(scs.name, '미등록') AS scs_name     -- 상태가 없으면 '미등록' 표시
+             , COUNT(sc.stu_cou_id)        AS student_cnt   -- 수강생 수
+             , ct.start_time
+             , ct.end_time
+        FROM course co
+                 LEFT JOIN course_class cc
+                           ON cc.class_id = co.class_id
+                 LEFT JOIN course_time ct
+                           ON ct.time_code = co.time_code
+                 LEFT JOIN student_course sc
+                           ON sc.course_id = co.course_id
+                 LEFT JOIN student_course_status scs
+                           ON scs.stu_cou_sta_code = sc.stu_cou_sta_code
+        WHERE co.professor = #{loginID}
+        GROUP BY
+            co.course_id
+               , co.title
+               , cc.class_name
+               , co.start_date
+               , co.end_date
+               , scs.name
+               , ct.start_time
+               , ct.end_time
+        ORDER BY co.start_date DESC
+    </select>
+
+
+
+</mapper>

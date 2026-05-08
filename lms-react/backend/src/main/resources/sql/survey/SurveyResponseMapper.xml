@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.survey.dao.SurveyResponseDao">
+
+	<!-- 설문 응답 목록 조회 -->
+	<select id="surveyResponseList" resultType="kr.happyjob.study.domain.survey.model.SurveyResponseModel">
+		SELECT
+				sr.response_id as responseId
+			,	sr.score_value as scoreValue
+			,	sr.text_value as textValue
+			,	DATE_FORMAT(sr.created_at, '%Y-%m-%d %H:%i:%s') as createdAt
+			,	sr.survey_id as surveyId
+			,	sr.question_id as questionId
+			,	sr.course_id as courseId
+			,	sr.loginID as loginId
+			,	s.title as surveyTitle
+			,	sq.content as questionContent
+			,	u.name as userName
+		FROM survey_response sr
+			LEFT JOIN survey s ON sr.survey_id = s.survey_id
+			LEFT JOIN survey_question sq ON sr.question_id = sq.question_id
+			LEFT JOIN tb_userinfo u ON sr.loginID = u.loginID
+		<where>
+			<if test="(surveyId != null) and (surveyId != '')">
+				and sr.survey_id = #{surveyId}
+			</if>
+			<if test="(loginId != null) and (!loginId.equals(''))">
+				and sr.loginID = #{loginId}
+			</if>
+			<if test="(from_date != null) and (!from_date.equals(''))">
+				and sr.created_at <![CDATA[>=]]> STR_TO_DATE(#{from_date}, '%Y-%m-%d')
+			</if>
+			<if test="(to_date != null) and (!to_date.equals(''))">
+				and sr.created_at <![CDATA[<=]]> STR_TO_DATE(#{to_date}, '%Y-%m-%d')
+			</if>
+		</where>
+		ORDER BY sr.response_id DESC
+		LIMIT #{pageIndex}, #{pageSize}
+	</select>
+
+	<!-- 설문 응답 목록 총 갯수 조회 -->
+	<select id="surveyResponseCnt" resultType="int">
+		SELECT COUNT(*)
+		FROM survey_response
+		<where>
+			<if test="(surveyId != null) and (surveyId != '')">
+				and survey_id = #{surveyId}
+			</if>
+			<if test="(loginId != null) and (!loginId.equals(''))">
+				and loginID = #{loginId}
+			</if>
+			<if test="(from_date != null) and (!from_date.equals(''))">
+				and created_at <![CDATA[>=]]> STR_TO_DATE(#{from_date}, '%Y-%m-%d')
+			</if>
+			<if test="(to_date != null) and (!to_date.equals(''))">
+				and created_at <![CDATA[<=]]> STR_TO_DATE(#{to_date}, '%Y-%m-%d')
+			</if>
+		</where>
+	</select>
+
+	<!-- 설문 응답 단건 조회 -->
+	<select id="surveyResponseDetail" resultType="kr.happyjob.study.domain.survey.model.SurveyResponseModel">
+		SELECT
+				sr.response_id as responseId
+			,	sr.score_value as scoreValue
+			,	sr.text_value as textValue
+			,	DATE_FORMAT(sr.created_at, '%Y-%m-%d %H:%i:%s') as createdAt
+			,	sr.survey_id as surveyId
+			,	sr.question_id as questionId
+			,	sr.course_id as courseId
+			,	sr.loginID as loginId
+		FROM survey_response sr
+		WHERE sr.response_id = #{responseId}
+	</select>
+
+	<!-- 설문 응답 신규등록 -->
+	<insert id="insertSurveyResponse" parameterType="java.util.Map">
+		INSERT
+		INTO survey_response
+			(
+				score_value, text_value, created_at,
+				survey_id, question_id, course_id, loginID
+			)
+		VALUES
+			(
+				<choose>
+					<when test="scoreValue != null and scoreValue != ''">
+						#{scoreValue}
+					</when>
+					<otherwise>
+						NULL
+					</otherwise>
+				</choose>
+			,	<choose>
+					<when test="textValue != null and textValue != ''">
+						#{textValue}
+					</when>
+					<otherwise>
+						NULL
+					</otherwise>
+				</choose>
+			,	NOW()
+			,	#{surveyId}
+			,	#{questionId}
+			,	#{courseId}
+			,	#{loginId}
+			)
+	</insert>
+
+	<!-- 설문 응답 수정 -->
+	<update id="updateSurveyResponse">
+		UPDATE survey_response
+		SET
+				score_value = #{scoreValue}
+			,	text_value = #{textValue}
+		WHERE response_id = #{responseId}
+	</update>
+
+	<!-- 설문 응답 삭제 -->
+	<delete id="deleteSurveyResponse">
+		DELETE
+		FROM survey_response
+		WHERE response_id = #{responseId}
+	</delete>
+
+	<!-- 특정 사용자의 특정 설문 응답 여부 확인 -->
+	<select id="checkUserSurveyResponse" resultType="int">
+		SELECT COUNT(*)
+		FROM survey_response
+		WHERE survey_id = #{surveyId}
+		AND loginID = #{loginId}
+	</select>
+
+	<!-- 설문 응답 통계 - 문항별 평균 및 응답 수 -->
+	<select id="getQuestionStatistics" resultType="java.util.HashMap">
+		SELECT
+			sq.question_id as questionId,
+			sq.content as questionContent,
+			sq.type as questionType,
+			sq.order as questionOrder,
+			COUNT(DISTINCT sr.loginID) as responseCount,
+			ROUND(AVG(sr.score_value), 2) as avgScore,
+			SUM(CASE WHEN sr.score_value = 5 THEN 1 ELSE 0 END) as score5Count,
+			SUM(CASE WHEN sr.score_value = 4 THEN 1 ELSE 0 END) as score4Count,
+			SUM(CASE WHEN sr.score_value = 3 THEN 1 ELSE 0 END) as score3Count,
+			SUM(CASE WHEN sr.score_value = 2 THEN 1 ELSE 0 END) as score2Count,
+			SUM(CASE WHEN sr.score_value = 1 THEN 1 ELSE 0 END) as score1Count
+		FROM survey_question sq
+		LEFT JOIN survey_response sr ON sq.question_id = sr.question_id
+		WHERE sq.survey_id = #{surveyId}
+		GROUP BY sq.question_id, sq.content, sq.type, sq.order
+		ORDER BY sq.order
+	</select>
+
+	<!-- 주관식 응답 목록 조회 -->
+	<select id="getTextResponses" resultType="java.util.HashMap">
+		SELECT
+			sr.response_id as responseId,
+			sr.text_value as textValue,
+			DATE_FORMAT(sr.created_at, '%Y-%m-%d %H:%i') as createdAt,
+			sr.loginID as loginId,
+			u.name as userName
+		FROM survey_response sr
+		LEFT JOIN tb_userinfo u ON sr.loginID = u.loginID
+		WHERE sr.question_id = #{questionId}
+		AND sr.text_value IS NOT NULL
+		AND sr.text_value != ''
+		ORDER BY sr.created_at DESC
+	</select>
+
+	<!-- 전체 응답자 목록 및 응답 내용 -->
+	<select id="getAllResponsesBySurvey" resultType="java.util.HashMap">
+		SELECT
+			sr.response_id as responseId,
+			sr.survey_id as surveyId,
+			sr.question_id as questionId,
+			sr.score_value as scoreValue,
+			sr.text_value as textValue,
+			DATE_FORMAT(sr.created_at, '%Y-%m-%d %H:%i') as createdAt,
+			sr.loginID as loginId,
+			u.name as userName,
+			sq.content as questionContent,
+			sq.type as questionType,
+			sq.order as questionOrder
+		FROM survey_response sr
+		LEFT JOIN tb_userinfo u ON sr.loginID = u.loginID
+		LEFT JOIN survey_question sq ON sr.question_id = sq.question_id
+		WHERE sr.survey_id = #{surveyId}
+		ORDER BY sr.loginID, sq.order
+	</select>
+
+</mapper>

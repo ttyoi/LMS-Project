@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.instructor.dao.IFileDAO">
+
+    <!-- 파일 등록 -->
+    <insert id="insertFile"
+            parameterType="kr.happyjob.study.domain.instructor.model.FileVO"
+            useGeneratedKeys="true"
+            keyProperty="file_id">
+        INSERT INTO file (
+            size,
+            type,
+            name,
+            logical_path,
+            physical_path
+        )
+        VALUES (
+                   #{size},
+                   #{type},
+                   #{name},
+                   #{logical_path},
+                   #{physical_path}
+               )
+    </insert>
+
+    <!-- 파일 조회 -->
+    <select id="selectFile" parameterType="long" resultType="kr.happyjob.study.domain.instructor.model.FileVO">
+        SELECT
+            file_id,
+            size,
+            type,
+            name,
+            logical_path,
+            physical_path
+        FROM file
+        WHERE file_id = #{file_id}
+    </select>
+
+    <!-- 파일 삭제 -->
+    <delete id="deleteFile" parameterType="long">
+        DELETE FROM file WHERE file_id = #{file_id}
+    </delete>
+
+</mapper>

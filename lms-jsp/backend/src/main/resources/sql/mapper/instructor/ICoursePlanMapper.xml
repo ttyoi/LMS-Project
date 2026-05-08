@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.instructor.dao.ICoursePlanDAO">
+    <select id="getInstlist" resultType="kr.happyjob.study.domain.admin.model.AUserVO">
+        SELECT loginID
+             , user_type, name, status
+        FROM tb_userinfo
+        WHERE user_type = "I"
+        AND status = 'R' AND name IS NOT NULL
+        <if test="mainProfId != null and mainProfId != ''">
+          AND loginID != #{mainProfId}</if>
+    </select>
+    <select id="getClassList" resultType="kr.happyjob.study.domain.instructor.model.ICourseClassVO">
+        SELECT class_id
+             , class_name
+             , people_limit, status
+        FROM course_class
+        WHERE status = 1
+        ORDER BY class_name
+    </select>
+    <select id="getClassTimeList" resultType="kr.happyjob.study.domain.instructor.model.ICourseTimeVO">
+        SELECT time_code
+             , start_time, end_time
+        FROM course_time
+        ORDER BY time_code
+    </select>
+    <insert id="saveCoursePlan" parameterType="java.util.Map">
+    <selectKey resultType="int" keyProperty="course_id" order="BEFORE">
+        SELECT NULLIF(MAX(course_id), 0) + 1 FROM course
+    </selectKey>
+        INSERT INTO course (
+             course_id
+            ,title
+            ,start_date
+            ,end_date
+            ,content
+            ,notice
+            ,plan
+            ,cos_sta_code
+            ,class_id
+            ,time_code
+            ,professor
+            ,sub_prof
+                ) values (
+             #{course_id}
+            ,#{title}
+            ,#{start_date}
+            ,#{end_date}
+            ,#{content}
+            ,#{notice}
+            ,#{plan}
+            ,0
+            ,#{classId}
+            ,#{time_code}
+            ,#{professor}
+            ,#{sub_prof}
+                 )
+    </insert>
+    <select id="getClassPlanList" resultType="kr.happyjob.study.domain.instructor.model.ICourseVO">
+        SELECT tb_user.name as inst_name
+             , sub_user.name as sInst_name
+             , cour.course_id
+             , cour.title
+             , substr(cour.start_date,1,10) as start_date
+             , substr(cour.end_date,1,10) as end_date
+             , count(stu_cour.stu_cou_id) as stu_cnt
+             , cour_cla.people_limit
+             , CASE WHEN (cour.cos_sta_code = -1) THEN '거절'
+                    WHEN (cour.cos_sta_code = 0) THEN '대기중'
+                    WHEN (cour.cos_sta_code = 1) THEN '승인'
+            END as status
+        FROM course cour
+                 left join
+             student_course stu_cour
+             on cour.course_id = stu_cour.course_id
+                 left join
+             course_status cour_stat
+             on cour.cos_sta_code = cour_stat.cos_sta_code
+                 left join
+             tb_userinfo tb_user
+             on tb_user.loginID = cour.professor
+                 left join
+             course_class cour_cla
+             on cour.class_id = cour_cla.class_id
+                 left join
+             tb_userinfo sub_user
+             on sub_user.loginID = cour.sub_prof
+        WHERE (cour.professor = #{loginID} OR cour.sub_prof = #{loginID})
+          and cour.course_isDeleted = 0
+          and tb_user.status = 'R' GROUP BY cour.course_id, cour.title, cour.start_date, cour.end_date,
+                                            tb_user.name, sub_user.name, cour_cla.people_limit, cour.cos_sta_code
+        ORDER BY start_date desc
+        LIMIT #{pageIndex}, #{pageSize}
+    </select>
+    <select id="totalCntCoursePlan" resultType="int">
+        SELECT count(cour.course_id) as totalcnt
+        FROM course cour
+        WHERE (cour.professor = #{loginID}
+            OR cour.sub_prof = #{loginID})
+          and cour.course_isDeleted = 0
+    </select>
+    <select id="getCoursPlanDetail" resultType="kr.happyjob.study.domain.instructor.model.ICourseVO">
+        SELECT tb_user.name as inst_name
+             , cour.course_id
+             , cour.cos_sta_code
+             , cour.title
+             , substr(cour.start_date,1,10) as start_date
+             , substr(cour.end_date,1,10) as end_date
+             , cour.content
+             , cour.notice
+             , cour.plan
+             , cour.sub_prof
+             , cour.class_id
+             , cour.time_code
+             , count(stu_cour.stu_cou_id) as stu_cnt
+             , cour_cla.people_limit
+             , cour_cla.class_name
+        FROM course cour
+                 left join student_course stu_cour on cour.course_id = stu_cour.course_id
+                 left join tb_userinfo tb_user on tb_user.loginID = cour.professor
+                 left join course_class cour_cla on cour.class_id = cour_cla.class_id
+        WHERE cour.course_id = #{courseId}
+          AND tb_user.status = 'R' GROUP BY cour.course_id, cour.cos_sta_code, cour.title, cour.start_date, cour.end_date,
+                                            cour.content, cour.notice, cour.plan, cour.sub_prof, cour.class_id,
+                                            cour.time_code, cour_cla.people_limit, cour_cla.class_name
+    </select>
+    <update id="updateCoursePlan">
+        update course set title = #{title}
+                        , start_date = #{start_date}
+                        , end_date = #{end_date}
+                        , content = #{content}
+                        , notice = #{notice}
+                        , plan = #{plan}
+                        , class_id = #{classId}
+                        , time_code = #{time_code}
+                        , professor = #{professor}
+                        , sub_prof = #{sub_prof}
+        WHERE course_id = #{courseId}
+    </update>
+    <update id="deleteCoursePlan">
+        update course set course_isDeleted = 1
+                          WHERE course_id = #{courseId}
+    </update>
+    <select id="searchCoursePlanList" resultType="kr.happyjob.study.domain.instructor.model.ICourseVO">
+        SELECT tb_user.name as inst_name
+             , sub_user.name as sInst_name
+             , cour.course_id
+             , cour.title
+             , substr(cour.start_date,1,10) as start_date
+             , substr(cour.end_date,1,10) as end_date
+             , count(stu_cour.stu_cou_id) as stu_cnt
+             , cour_cla.people_limit
+             , CASE WHEN (cour.cos_sta_code = -1) THEN '거절'
+                    WHEN (cour.cos_sta_code = 0) THEN '대기중'
+                    WHEN (cour.cos_sta_code = 1) THEN '승인'
+                    END as status
+        FROM course cour
+                 left join
+             student_course stu_cour
+             on cour.course_id = stu_cour.course_id
+                 left join
+             course_status cour_stat
+             on cour.cos_sta_code = cour_stat.cos_sta_code
+                 left join
+             tb_userinfo tb_user
+             on tb_user.loginID = cour.professor
+                 left join
+             course_class cour_cla
+             on cour.class_id = cour_cla.class_id
+                left join
+             tb_userinfo sub_user
+             on sub_user.loginID = cour.sub_prof
+        <where>
+            AND (cour.professor = #{loginID}
+            OR cour.sub_prof = #{loginID})
+            and cour.course_isDeleted = 0
+            <if test="(title != null) and (!title.equals(''))">
+                <choose>
+                    <when test="oname != null and oname == ''">
+                        and 1=1
+                    </when>
+                    <when test="oname eq 'title'.toString()">
+                        and cour.title LIKE CONCAT('%', #{title}, '%')
+                    </when>
+                    <otherwise>
+                        AND 1=2
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="(search_sdate != null and search_sdate != '') and (search_edate != null and search_edate != '')">
+                <![CDATA[
+                and start_date >= #{search_sdate}
+                and end_date < #{search_edate}
+            ]]>
+            </if>
+        </where>
+        GROUP BY cour.course_id, cour.title, cour.start_date, cour.end_date
+      ORDER BY
+        <choose>
+          <when test="sortColumn != null and sortColumn != ''">
+            <choose>
+              <when test="sortColumn == 'title'">cour.title</when>
+              <when test="sortColumn == 'inst_name'">inst_name</when>
+              <when test="sortColumn == 'start_date'">cour.start_date</when>
+              <when test="sortColumn == 'end_date'">cour.end_date</when>
+              <otherwise>cour.course_id</otherwise>
+            </choose>
+            <choose>
+              <when test="sortOrder == 'DESC'">DESC</when>
+              <otherwise>ASC</otherwise>
+            </choose>
+          </when>
+          <otherwise>
+            cour.start_date DESC
+          </otherwise>
+        </choose>
+        LIMIT #{pageIndex}, #{pageSize}
+    </select>
+    <select id="searchCoursePlanCnt" resultType="int">
+        SELECT
+          count(cour.course_id) as tot_cnt
+        FROM course cour
+        left join
+        student_course stu_cour
+        on cour.course_id = stu_cour.course_id
+        left join
+        course_status cour_stat
+        on cour.cos_sta_code = cour_stat.cos_sta_code
+        left join
+        tb_userinfo tb_user
+        on tb_user.loginID = cour.professor
+        left join
+        course_class cour_cla
+        on cour.class_id = cour_cla.class_id
+        WHERE (cour.professor = #{loginID} OR cour.sub_prof = #{loginID})
+        and cour.course_isDeleted = 0
+        <if test="(sname != null) and (!sname.equals(''))">
+            and cour.title LIKE concat('%',#{sname},'%')
+        </if>
+--         group by cour.course_id, cour.title, cour.start_date, cour.end_date
+    </select>
+
+  <select id="checkOverlap" resultType="int">
+    SELECT COUNT(*)
+    FROM course
+    WHERE course_isDeleted = 0   AND cos_sta_code != -1
+    <if test="courseId != null and courseId != ''">
+    AND course_id != #{courseId}
+  </if>
+
+    AND (
+    -- 1. 선택한 메인 강사(나)가 이미 해당 시간에 수업 중인지 (메인 혹은 보조로)
+    professor = #{professor}
+    OR sub_prof = #{professor}
+
+    -- 2. 선택한 강의실이 해당 시간에 이미 사용 중인지
+    OR class_id = #{classId}
+
+    -- 3. [추가] 선택한 보조 강사가 해당 시간에 이미 수업 중인지 (메인 혹은 보조로)
+    <if test="sub_prof != null and sub_prof != ''">
+      OR professor = #{sub_prof}
+      OR sub_prof = #{sub_prof}
+    </if>
+    )
+    AND time_code = #{time_code}
+    <![CDATA[
+      -- 4. 날짜 기간이 겹치는지 확인
+      AND start_date <= #{end_date}
+      AND end_date >= #{start_date}
+      ]]>
+  </select>
+
+
+
+
+
+</mapper>

@@ -1,0 +1,138 @@
+* {
+    box-sizing: border-box;
+    font-family: "Noto Sans KR", sans-serif;
+}
+
+/* ====== 테이블 영역 ====== */
+.hw-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.hw-table th,
+.hw-table td {
+    border: 1px solid #c7c7c7;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.hw-table th {
+    background-color: #f4f4f4;
+    width: 120px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.hw-input,
+.hw-date {
+    width: 100%;
+    height: 36px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+}
+
+/* ====== 안내문 박스 ====== */
+.hw-guide-box {
+    background-color: #f1f1f1;
+    padding: 15px;
+    border: 1px solid #dcdcdc;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ====== 텍스트 박스 ====== */
+.hw-textarea {
+    width: 100%;
+    height: 260px;
+    resize: none;
+    border: 1px solid #cfcfcf;
+    padding: 15px;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* ====== 파일 첨부 영역 ====== */
+.hw-file-box {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-top: 10px;
+    padding: 12px;
+
+    display: flex;
+    justify-content: space-between; /* 왼쪽: 파일목록 / 오른쪽: 첨부버튼 */
+    align-items: flex-start;
+    gap: 20px;
+}
+
+/* 파일 목록 영역 */
+#filePreview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 파일 항목 디자인 */
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.file-name {
+    font-size: 14px;
+    color: #000;
+    white-space: nowrap;
+}
+
+.file-remove-btn {
+    padding: 4px 8px;
+    background: #fff;
+    border: 1px solid #888;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* 첨부하기 버튼 */
+.btn-file-add {
+    padding: 10px 22px;
+    border: 1px solid #444;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+}
+
+/* ====== 버튼 영역 ====== */
+.hw-btn-box {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-submit,
+.btn-cancel {
+    padding: 10px 30px;
+    font-size: 15px;
+    border: 1px solid #aaa;
+    background-color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn-submit:hover,
+.btn-cancel:hover {
+    background-color: #f2f2f2;
+}

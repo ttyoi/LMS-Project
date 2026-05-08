@@ -1,0 +1,308 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 30px;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- 공통 테이블 스타일 ---------- */
+#wrap_area #container .contents .content .container .table-wrapper {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#wrap_area #container .contents .content .container .table-fixed {
+    width:100%;
+    border-collapse: collapse;
+}
+
+#wrap_area #container .contents .content .container .table-fixed th,
+#wrap_area #container .contents .content .container .table-fixed td {
+    border: 1px solid #ccc; !important;
+    padding: 10px; !important;
+    text-align: left; !important;
+    white-space: normal; !important;
+}
+
+
+/* 관리자 시험목록 테이블 버튼 */
+.btn-red {
+    background-color: #d9534f; /* 붉은색 */
+    color: white;              /* 글자색 */
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    align-content: center; !important;
+}
+
+.table-fixed td.action-col {
+    width: 80px !important;
+    text-align: center !important;
+}
+
+.btn-red:hover {
+    background-color: #c9302c; /* hover 시 더 진한 빨강 */
+}
+
+
+/* ---------- 검색 영역 ---------- */
+.search-bar {
+    display: flex;
+    width: 60%;
+    gap: 10px;
+    margin: 20px auto;
+    justify-content: space-between;
+}
+
+.search-bar select{
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    flex: 3;
+}
+
+.search-bar input {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    flex: 7;
+}
+
+.search-bar button {
+    padding: 8px 16px;
+    background: #3a7df5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+/* ---------- 페이지 이동 버튼 ---------- */
+.nav-btn-box {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.nav-btn-box button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    margin-left: 10px;
+}
+
+.back-btn {
+    background: #888;
+    color: white;
+}
+
+/*.back-btn:hover{
+
+}*/
+
+.edit-btn,
+.save-btn {
+    background: #007bff;
+    color: white;
+}
+
+/* ---------- 페이징 처리 ---------- */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 8px;
+}
+
+.page-btn {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.page-btn:hover {
+    background: #f0f0f0;
+}
+
+.page-btn.active {
+    background: #3a7df5;
+    color: white;
+    border-color: #3a7df5;
+}
+
+/* ---------- 상세/수정 테이블 제목 라인 ---------- */
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* ---------- 시험문제 등록 페이지 --------------- */
+h2 {
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    background: #3a7df5;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.btn:hover {
+    background: #336ed1;
+}
+
+.file-section {
+    display: inline-block;
+
+}
+#downloadSample{
+    margin-left: 50px;
+}
+
+#fileName {
+    margin-left: 5px;
+    margin-right: auto;
+    font-weight: bold;
+}
+
+.preview-btn {
+    margin-bottom: 20px;
+    background: #4caf50;
+}
+
+/* 테이블 전체를 감싸는 wrapper */
+#previewWrapper {
+    width: 100%;
+    max-height: 350px;       /* 필요하면 높이 제한 추가 */
+    overflow-x: auto;        /* 가로 스크롤 */
+    overflow-y: auto;        /* 세로 스크롤 */
+    margin-top: 10px;
+}
+
+#previewTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#previewTable th,
+#previewTable td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+    max-width: 300px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.button-section {
+    margin-top: 20px;
+}
+
+.submit {
+    background: #007bff;
+}
+
+.cancel {
+    background: #888;
+}
+/* 시험정보 영역 스타일 추가 */
+/* 미리보기 버튼 + 시험정보 영역을 수평 정렬하는 래퍼 */
+.exam-top-bar {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center; /* 수직 가운데 정렬 */
+    gap: 12px; /* 버튼과 박스 사이 간격 */
+    margin-bottom: 10px;
+}
+
+/* 시험정보 영역 스타일 */
+.exam-info-box {
+    width: 250px;
+    padding: 12px;
+    background: #f6f6f6;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.exam-info-box h4 {
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.exam-info-box p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+/* 시험 결과 메타 정보 스타일 */
+.result-meta {
+    display: flex;
+    gap: 18px;               /* 항목 간 간격 */
+    font-size: 16px;         /* 텍스트 크기 */
+    margin-bottom: 14px;     /* 아래 영역 여백 */
+    padding: 8px 4px;        /* 내부 여백 */
+    border-radius: 6px;      /* 모서리 둥글게 */
+    background: #f7f9fc;     /* 은은한 배경색 */
+    border: 1px solid #e6e9ef;
+    align-items: center;     /* 세로 정렬 */
+}
+
+.result-meta strong {
+    color: #333;
+    margin-right: 4px;       /* strong 뒤 간격 */
+}
+
+.result-meta-item {
+    display: flex;
+    align-items: center;
+}
+
+/* ===== 시험 수정 textarea 전용 ===== */
+.table-fixed textarea {
+    display: flex;
+    width: 100%;
+    min-height: 80px;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+.table-fixed input[type="text"] {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    text-align: center;
+}
+
+.table-fixed textarea:focus {
+    background: rgba(0,0,0,0.03);
+}

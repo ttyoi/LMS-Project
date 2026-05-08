@@ -1,0 +1,29 @@
+.DS_Store
+.idea/
+.smarttomcat/
+backend/.smarttomcat/
+
+# Maven / Java build output
+**/target/
+**/build/
+**/out/
+**/*.class
+
+# Eclipse / STS
+**/.classpath
+**/.project
+**/.settings/
+**/.factorypath
+
+# Logs / temp
+**/logs/
+**/log/
+**/*.log
+**/*.tmp
+conf/
+logs/
+work/
+
+# Node / front-end
+**/node_modules/
+**/dist/

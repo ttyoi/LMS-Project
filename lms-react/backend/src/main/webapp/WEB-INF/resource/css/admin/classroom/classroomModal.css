@@ -1,0 +1,316 @@
+/* ============================= */
+/* 공용 모달 스타일 */
+/* ============================= */
+
+/* 모달 배경 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+/* 모달 박스 */
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 8px;
+    width: 675px; /* 기존 450px 대비 1.5배 */
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* 모달 제목 */
+.modal-content h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.3em;
+    color: #333;
+}
+
+/* 닫기 버튼 (X) */
+.modal-content .close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    color: #999;
+}
+.modal-content .close:hover {
+    color: #333;
+}
+
+/* 입력 그룹 */
+.modal-input-group {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.modal-input-group label {
+    flex: 0 0 80px;
+    font-weight: 500;
+    color: #555;
+}
+
+.modal-input-group input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.95em;
+    background-color: #f9f9f9;
+}
+
+.modal-input-group input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    background-color: #fff;
+}
+
+.modal-input-group input[readonly] {
+    background-color: #e9e9e9;
+    cursor: not-allowed;
+}
+
+/* 하단 버튼 영역 */
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+/* 공용 버튼 */
+.btn-cancel,
+.btn-save {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #666;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.btn-cancel:hover,
+.btn-save:hover {
+    background-color: #f5f5f5;
+}
+
+/* ============================= */
+/* 상세보기 모달 전용 */
+/* ============================= */
+
+#modalDetail .modal-content {
+    width: 600px;
+    padding: 30px;
+}
+
+#modalDetail h3 {
+    margin: 0 0 25px 0;
+    font-size: 1.3em;
+}
+
+#modalDetail .detail-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+#modalDetail .detail-label {
+    flex: 0 0 120px;  /* ← 140px → 120px로 변경 */
+    padding: 10px 15px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+#modalDetail .detail-value {
+    flex: 1;
+    padding: 10px 15px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #333;
+    min-height: 20px;
+    text-align: center;
+}
+
+#modalDetail .detail-value.full {
+    flex: 3;
+}
+
+
+#modalDetail .detail-input-gray {
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #999;
+    cursor: not-allowed;
+    font-size: 0.9em;
+    width: 120px;  /* 유지 */
+    text-align: center;
+}
+
+/* 상세보기 모달 버튼 */
+#modalDetail .btn-detail-save {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+#modalDetail .btn-detail-cancel {
+    background-color: #ddd;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+/* ============================= */
+/* 삭제 모달 버튼 */
+/* ============================= */
+#modalDelete .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* 삭제 버튼 공통 스타일 */
+#modalDelete .modal-content .btn-delete {
+    appearance: none !important;  /* 추가 */
+    display: block !important;
+    margin-top: 30px !important;
+    padding: 10px 20px !important;
+    background-color: #e74c3c !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    font-size: 1em !important;
+    width: fit-content !important;
+}
+
+#modalDelete .modal-content .btn-delete:hover {
+    background-color: #c0392b !important;
+}
+
+
+/* ============================= */
+/* 추가 모달 버튼 */
+/* ============================= */
+#modalAdd .btn-add-save {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+#modalAdd .btn-add-cancel {
+    background-color: #ddd;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.detail-input-gray {
+    width: 100%;
+    box-sizing: border-box;  /* padding 포함해서 width 계산 */
+}
+
+
+/* 수정 모달 */
+#modalEdit .modal-content {
+    width: 600px;
+    padding: 30px;
+}
+
+#modalEdit h3 {
+    margin: 0 0 25px 0;
+    font-size: 1.3em;
+}
+
+#modalEdit .detail-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+#modalEdit .detail-label {
+    flex: 0 0 120px;  /* 상세보기와 동일 */
+    padding: 10px 15px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+#modalEdit .detail-value {
+    flex: 1;
+    padding: 10px 15px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #333;
+    min-height: 20px;
+    text-align: center;
+}
+
+#modalEdit .detail-value.full {
+    flex: 3;
+}
+
+#modalEdit .detail-input-gray {
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333; /* 수정 모달은 입력 가능하므로 cursor 제거, 글씨 진하게 */
+    font-size: 0.9em;
+    width: 120px;  /* 유지 */
+    text-align: center;
+}
+
+/* 수정 모달 버튼 */
+#modalEdit .btn-edit-save {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+#modalEdit .btn-edit-cancel {
+    background-color: #ddd;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}

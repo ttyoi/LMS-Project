@@ -1,0 +1,149 @@
+.table-header {
+    display: flex;
+    font-weight: bold;
+    border-bottom: 2px solid #ccc;
+    padding: 8px 0;
+    margin-bottom: 15px;
+    background-color: #f5f5f5; /* 여기 추가 */
+    /*padding: 10px 20px;*/
+    border-radius: 5px;
+}
+
+/* 검색 영역 셀렉트 박스 */
+#searchType {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9em;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+/* 검색 영역 입력창 */
+#searchKeyword {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9em;
+    width: 200px;
+}
+
+/* 검색 버튼 (기존 btn-edit 스타일과 동일) */
+#btnSearch {
+    margin-left: 5px;
+    background-color: #5eb8ff;
+    color: #fff;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+#btnSearch:hover {
+    background-color: #4a9fd8;
+}
+
+/* =======================
+   테이블 헤더 & 데이터 중앙 정렬 (그리드 기반)
+   ======================= */
+
+/* 헤더 */
+.table-row-header {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px 120px 220px 120px 120px; /* 컬럼 너비 일치 */
+    align-items: center;      /* 세로 중앙 */
+    padding: 10px 0;
+    margin-top: 15px;
+    border-bottom: 2px solid #ddd;
+    font-weight: bold;
+    background-color: #f9f9f9;
+    text-align: center;       /* 헤더 텍스트 중앙 */
+}
+
+/* 각 컬럼 */
+.table-row-header .col,
+.table-row .col {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;  /* 텍스트 수평 중앙 */
+    white-space: nowrap;
+}
+
+/* 데이터 행 */
+.table-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px 120px 220px 120px 120px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    align-items: center;      /* 세로 중앙 */
+    text-align: center;       /* 기본 중앙 정렬 */
+}
+
+/* 컬럼별 flex 비율 & 패딩 (필요 시) */
+.course-id  { /* 과정번호 */ flex: 1; }
+.title      { /* 강의명 */ flex: 2; }
+.professor  { flex: 1.5; }
+.class-id   { flex: 1.5; }
+.period     { flex: 1.5; }
+.req-status { flex: 1.5; }
+.status     { flex: 1; }
+
+/* 데이터 좌측 정렬 유지하고 싶으면 아래 적용 */
+.table-row .col {
+    text-align: left;
+    padding-left: 10px;  /* 필요 시 조정 */
+}
+
+/* 상태 배지 */
+.status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+/* hover 효과 (선택 사항) */
+.table-row:hover {
+    background-color: #f5f5f5;
+}
+/* 페이징 영역 전체 */
+.pagination {
+    display: flex;
+    justify-content: center;   /* 👉 가운데 정렬 */
+    align-items: center;
+    gap: 6px;                  /* 버튼 간격 */
+    margin: 20px 0;
+}
+
+/* 기본 버튼 */
+.pagination button {
+    min-width: 34px;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* hover */
+.pagination button:hover {
+    background: #f3f3f3;
+}
+
+/* 현재 페이지 */
+.pagination button.active {
+    background: #4E73DF;   /* 프로젝트 메인 컬러 */
+    color: #fff;
+    border-color: #4E73DF;
+    font-weight: 600;
+    cursor: default;
+}
+
+/* 이전/다음 버튼 */
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

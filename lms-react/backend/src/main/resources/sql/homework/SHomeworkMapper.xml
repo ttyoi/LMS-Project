@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.student.dao.SHomeworkDAO">
+
+    <!-- ===========================================================
+          1) 학생이 듣는 과정의 과제 목록 조회
+    ============================================================ -->
+    <select id="getStudentHomeworkList" parameterType="map"
+            resultType="kr.happyjob.study.domain.student.model.SHomeworkVO">
+
+        SELECT DISTINCT
+            h.homework_code,
+            h.course_id,
+            c.title AS course_name,
+            h.title AS homework_title,
+            h.start_date,
+            h.end_date,
+            u.name AS teacher_name,
+            s.submission_code AS submission_code,
+            s.status,
+            s.score,
+            s.feedback,
+            s.date AS submit_date,
+
+            -- 🔥 강사 과제 첨부파일
+            f.file_id,
+            f.name AS file_name
+
+        FROM homework h
+                 JOIN course c
+                      ON h.course_id = c.course_id
+
+                 JOIN tb_userinfo u
+                      ON u.loginID = h.loginID
+
+                 LEFT JOIN submission s
+                           ON s.homework_code = h.homework_code
+                               AND s.loginID = #{loginId}
+
+            -- 🔥 여기부터가 추가된 핵심
+                 LEFT JOIN homework_file hf
+                           ON hf.homework_code = h.homework_code
+                                  AND hf.type = 'HOMEWORK'
+
+                 LEFT JOIN file f
+                           ON f.file_id = hf.file_id
+
+        ORDER BY h.start_date DESC
+    </select>
+
+
+
+    <!-- ===========================================================
+          2) 과제 제출 페이지 - 과제 상세 조회
+    ============================================================ -->
+    <select id="getHomeworkDetail" parameterType="map"
+            resultType="kr.happyjob.study.domain.student.model.SHomeworkVO">
+
+        SELECT DISTINCT
+            h.homework_code,
+            h.course_id,
+            c.title AS course_name,
+
+            h.title AS homework_title,
+            h.content AS content,
+            h.start_date,
+            h.end_date,
+
+            u.name AS teacher_name,
+            h.loginID AS teacher,
+
+            -- 🔥 강사 과제 첨부파일
+            f.file_id,
+            f.name AS file_name,
+            f.logical_path AS file_path
+
+        FROM homework h
+                 JOIN course c
+                      ON h.course_id = c.course_id
+
+                 JOIN tb_userinfo u
+                      ON u.loginID = h.loginID
+
+            -- 🔥 여기 추가
+                 LEFT JOIN homework_file hf
+                           ON hf.homework_code = h.homework_code
+                               AND hf.type = 'HOMEWORK'
+
+                 LEFT JOIN file f
+                           ON f.file_id = hf.file_id
+
+        WHERE h.homework_code = #{homework_code}
+    </select>
+
+
+
+    <!-- ===========================================================
+          3) 제출 등록
+    ============================================================ -->
+    <insert id="insertSubmission" parameterType="kr.happyjob.study.domain.student.model.SHomeworkVO">
+        INSERT INTO submission (homework_code, loginID, status, date)
+        VALUES (#{homework_code}, #{loginID}, 1, NOW());
+
+        <selectKey resultType="int" keyProperty="submission_code" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+
+    <!-- 파일-제출 연동 -->
+    <insert id="insertHomeworkFile">
+        INSERT INTO homework_file (type, homework_code, submission_code, file_id)
+        VALUES ('STUDENT', #{homework_code}, #{submission_code}, #{file_id})
+    </insert>
+
+
+    <!-- ===========================================================
+          4) 제출 결과 단건 조회
+    ============================================================ -->
+    <select id="getSubmittedOne" parameterType="int"
+            resultType="kr.happyjob.study.domain.student.model.SHomeworkVO">
+
+        SELECT
+            s.submission_code,
+            s.homework_code,
+            s.loginID,
+            s.date AS submit_date,
+            s.score,
+            s.feedback,
+            s.status,
+
+            h.title AS homework_title,
+            h.content AS content,
+            h.start_date,
+            h.end_date,
+
+            c.title AS course_name,
+            u.name AS teacher_name,
+
+            f.file_id,
+            f.name AS file_name,
+            f.logical_path AS file_path
+
+        FROM submission s
+                 JOIN homework h ON s.homework_code = h.homework_code
+                 JOIN course c ON h.course_id = c.course_id
+                 JOIN tb_userinfo u ON h.loginID = u.loginID
+
+                 LEFT JOIN homework_file hf ON hf.submission_code = s.submission_code
+                 LEFT JOIN file f ON f.file_id = hf.file_id
+
+        WHERE s.submission_code = #{submissionCode}
+    </select>
+
+
+    <!-- ===========================================================
+          5) 학생 제출 결과 전체 조회
+    ============================================================ -->
+  <select id="submittedList" parameterType="string"
+          resultType="kr.happyjob.study.domain.student.model.SHomeworkVO">
+    SELECT
+      s.submission_code,
+      s.homework_code,
+      s.loginID,
+      s.date AS submit_date,
+      s.status,
+      s.score,
+      s.feedback,
+      s.appeal_content,
+      s.appeal_reply AS appeal_reply,
+      h.title AS homework_title,
+      h.start_date,
+      h.end_date,
+
+      c.title AS course_name,
+      u.name AS teacher_name,
+
+      f.file_id,
+      f.name AS file_name,
+      f.logical_path AS file_path
+    FROM submission s
+           JOIN homework h ON s.homework_code = h.homework_code
+           JOIN course c ON h.course_id = c.course_id
+           JOIN tb_userinfo u ON h.loginID = u.loginID
+           LEFT JOIN homework_file hf ON hf.submission_code = s.submission_code
+           LEFT JOIN file f ON f.file_id = hf.file_id
+    WHERE s.loginID = #{loginId}
+    ORDER BY s.date DESC
+  </select>
+
+
+    <!-- 과제 + 학생 기준 제출 여부 확인 -->
+    <select id="findSubmissionCode" parameterType="map" resultType="int">
+        SELECT submission_code
+        FROM submission
+        WHERE homework_code = #{homework_code}
+          AND loginID = #{loginId}
+            LIMIT 1
+    </select>
+
+
+    <!-- 기존 제출 수정 -->
+    <update id="updateSubmission">
+        UPDATE submission
+        SET date = NOW()
+        WHERE submission_code = #{submission_code}
+    </update>
+
+    <delete id="deleteSubmissionFile">
+        DELETE FROM homework_file
+        WHERE submission_code = #{submission_code}
+    </delete>
+
+  <update id="updateAppeal" parameterType="kr.happyjob.study.domain.student.model.SHomeworkVO">
+    UPDATE submission
+    SET appeal_content = #{appeal_content},
+        date = NOW()
+    WHERE submission_code = #{submission_code}
+      AND loginID = #{loginID}
+  </update>
+
+</mapper>

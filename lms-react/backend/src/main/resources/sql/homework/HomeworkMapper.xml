@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.instructor.dao.IHomeworkDAO">
+
+  <resultMap id="homeworkMap" type="kr.happyjob.study.domain.instructor.model.IHomeworkVO">
+    <id property="homework_code" column="homework_code"/>
+    <result property="title" column="title"/>
+    <result property="content" column="content"/>
+    <result property="start_date" column="start_date"/>
+    <result property="end_date" column="end_date"/>
+    <result property="status" column="status"/>
+    <result property="course_id" column="course_id"/>
+    <result property="loginID" column="loginID"/>
+    <result property="course_name" column="course_name"/>
+    <result property="teacher" column="teacher"/>
+    <result property="teacher_name" column="teacher_name"/>
+    <result property="file_id" column="file_id"/>
+  </resultMap>
+
+
+  <resultMap id="homeworkDetailMap"
+             type="kr.happyjob.study.domain.instructor.model.IHomeworkVO"
+             extends="homeworkMap">
+
+    <collection property="fileList"
+                javaType="java.util.ArrayList"
+                ofType="kr.happyjob.study.domain.homework.model.HomeworkFileVO"
+                column="homework_code">
+      <result property="file_id" column="file_id"/>
+      <result property="name" column="file_name"/>
+      <result property="logical_path" column="logical_path"/>
+      <result property="physical_path" column="physical_path"/>
+      <result property="file_size" column="size"/>
+      <result property="type" column="type"/>
+    </collection>
+  </resultMap>
+
+
+  <resultMap id="submissionListMap"
+             type="kr.happyjob.study.domain.homework.model.SubmissionListVO">
+    <id property="submission_code" column="submission_code"/>
+    <result property="homework_code" column="homework_code"/>
+    <result property="appeal_content" column="appeal_content"/>
+    <result property="appeal_reply" column="appeal_reply"/>
+    <result property="student_id" column="student_id"/>
+    <result property="student_name" column="student_name"/>
+    <result property="start_date" column="start_date"/>
+    <result property="end_date" column="end_date"/>
+    <result property="submit_date" column="submit_date"/>
+    <result property="score" column="score"/>
+    <result property="feedback" column="feedback"/>
+    <result property="status" column="status"/>
+    <result property="homework_title" column="homework_title"/>
+    <result property="course_name" column="course_name"/>
+    <result property="file_id" column="file_id"/>
+    <result property="file_name" column="file_name"/>
+  </resultMap>
+
+
+  <insert id="insertHomework"
+          parameterType="kr.happyjob.study.domain.instructor.model.IHomeworkVO"
+          useGeneratedKeys="true"
+          keyProperty="homework_code">
+    INSERT INTO homework
+      (title, content, start_date, end_date, status, loginID, course_id)
+    VALUES
+      (#{title}, #{content}, #{start_date}, #{end_date}, '진행 예정', #{loginID}, #{course_id})
+  </insert>
+
+
+  <select id="listHomework" resultMap="homeworkMap">
+    SELECT
+      h.homework_code,
+      h.title,
+      h.start_date,
+      h.end_date,
+      h.status,
+      h.loginID,
+      h.course_id,
+      c.title AS course_name,
+      u.name AS teacher,
+      u.name AS teacher_name,
+      hf.file_id  -- 👈 추가된 부분
+    FROM homework h
+           LEFT JOIN course c ON h.course_id = c.course_id
+           LEFT JOIN tb_userinfo u ON h.loginID = u.loginID
+           LEFT JOIN homework_file hf ON h.homework_code = hf.homework_code AND hf.type = 'HOMEWORK'
+    WHERE h.loginID = #{loginId}
+    ORDER BY h.homework_code DESC
+  </select>
+
+
+  <select id="detailHomework"
+          parameterType="int"
+          resultMap="homeworkDetailMap">
+    SELECT
+      h.homework_code,
+      h.title,
+      h.content,
+      h.start_date,
+      h.end_date,
+      h.status,
+      h.course_id,
+      h.loginID,
+      c.title AS course_name,
+      u.name  AS teacher_name,
+      null AS teacher,
+      f.file_id,
+      f.name AS file_name,
+      f.logical_path,
+      f.physical_path,
+      f.size,
+      f.type
+    FROM homework h
+           LEFT JOIN course c ON h.course_id = c.course_id
+           LEFT JOIN tb_userinfo u ON h.loginID = u.loginID
+           LEFT JOIN homework_file hf
+                     ON hf.homework_code = h.homework_code
+                       AND hf.type = 'HOMEWORK'
+           LEFT JOIN file f
+                     ON f.file_id = hf.file_id
+    WHERE h.homework_code = #{homework_code}
+  </select>
+
+
+  <select id="getCourseListByTeacher"
+          parameterType="string"
+          resultType="kr.happyjob.study.domain.instructor.model.ICourseVO">
+    SELECT
+      c.course_id,
+      c.title,
+      c.start_date,
+      c.end_date
+    FROM course c
+    WHERE c.professor = #{loginId}
+       OR c.sub_prof = #{loginId}
+  </select>
+
+
+  <insert id="insertFile" parameterType="map">
+    <selectKey keyProperty="file_id" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    INSERT INTO file
+    (size, type, name, logical_path, physical_path)
+    VALUES
+    (#{size}, #{type}, #{name}, #{logical_path}, #{physical_path})
+  </insert>
+
+
+  <select id="selectAllSubmissions" parameterType="string" resultMap="submissionListMap">
+    SELECT
+      s.submission_code,
+      s.homework_code,
+      s.loginID AS `student_id`,
+      u.name AS `student_name`,
+      s.date AS `submit_date`,
+      s.score,
+      s.feedback,
+      s.appeal_content,
+      s.appeal_reply,
+      h.start_date,
+      h.end_date,
+      h.title AS `homework_title`,
+      c.title AS `course_name`,
+      h.status AS status,
+      f.file_id AS `file_id`,
+      f.name AS `file_name`
+    FROM submission s
+           JOIN tb_userinfo u ON u.loginID = s.loginID
+           JOIN homework h ON s.homework_code = h.homework_code
+           JOIN course c ON h.course_id = c.course_id
+           LEFT JOIN homework_file hf ON hf.submission_code = s.submission_code
+           LEFT JOIN file f ON f.file_id = hf.file_id
+    WHERE h.loginID = #{loginId}
+    ORDER BY s.date DESC
+  </select>
+
+
+  <update id="updateSubmission">
+    UPDATE submission
+    <set>
+      <if test="score != null">score = #{score},</if>
+      <if test="feedback != null">feedback = #{feedback},</if>
+      <if test="appealReply != null">appeal_reply = #{appealReply},</if>
+    </set>
+    WHERE submission_code = #{submissionCode}
+  </update>
+
+  <update id="updateHomework"
+          parameterType="kr.happyjob.study.domain.instructor.model.IHomeworkVO">
+    UPDATE homework
+    SET
+      title = #{title},
+      content = #{content},
+      start_date = #{start_date},
+      end_date = #{end_date}
+    WHERE homework_code = #{homework_code}
+  </update>
+
+  <delete id="deleteHomework" parameterType="int">
+    DELETE FROM homework
+    WHERE homework_code = #{homework_code}
+  </delete>
+
+  <delete id="deleteFile" parameterType="int">
+    DELETE FROM file
+    WHERE file_id = #{file_id}
+  </delete>
+
+  <select id="countSubmissions" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM submission
+    WHERE homework_code = #{homework_code}
+  </select>
+
+</mapper>

@@ -1,0 +1,78 @@
+/* 헤더 */
+
+.header {
+  height: 56px;
+  background: #fff;
+  border-bottom: 1px solid #e8ecf0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pageName {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a3c5e;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.greeting {
+  font-size: 14px;
+  color: #555;
+}
+
+.greeting strong {
+  color: #1a3c5e;
+}
+
+/* 햄버거 버튼 — 데스크탑에서는 숨김 */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #1a3c5e;
+  padding: 4px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.hamburger:hover {
+  background: #f0f4f8;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+    align-items: center;
+  }
+
+  .header {
+    padding: 0 16px;
+  }
+
+  .pageName {
+    font-size: 15px;
+  }
+
+  .greeting {
+    font-size: 13px;
+  }
+}

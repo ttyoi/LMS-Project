@@ -1,0 +1,311 @@
+.pageShell {
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  color: #222;
+  line-height: 1.4;
+}
+
+.pageShell,
+.pageShell * {
+  box-sizing: border-box;
+}
+
+.pageShell button,
+.pageShell input,
+.pageShell select {
+  font: inherit;
+}
+
+.pageShell button {
+  cursor: pointer;
+}
+
+.boardGrid {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.stackRight {
+  display: grid;
+  gap: 18px;
+}
+
+.panel {
+  border: 1px solid #d4d9e1;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 14px 30px rgba(23, 36, 68, 0.04);
+  padding: 16px 18px 20px;
+}
+
+.coursePanel {
+  min-width: 0;
+}
+
+.panelTitle {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #244ea2;
+  font-weight: 700;
+}
+
+.panelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.panelCaption {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 5;
+}
+
+.toolbar input,
+.toolbar select {
+  height: 34px;
+  border: 1px solid #cdd3dc;
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #fff;
+}
+
+.toolbar input[type="date"] {
+  min-width: 140px;
+}
+
+.toolbar input:not([type="date"]) {
+  flex: 1;
+  min-width: 180px;
+}
+
+.toolbar button,
+.segmented button,
+.pagination button {
+  height: 32px;
+  border: 1px solid #d7dce4;
+  border-radius: 6px;
+  background: #fff;
+  padding: 0 14px;
+}
+
+.primary {
+  background: #3579d6 !important;
+  color: #fff;
+  border-color: #3579d6 !important;
+}
+
+.statusChecks {
+  display: flex;
+  gap: 10px;
+  /* margin-top: 10px; */
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.statusCheckLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statusCheckLabel input {
+  margin: 0;
+}
+
+.tableWrap {
+  height: 252px;
+  overflow: auto;
+  border: 1px solid #8e8e8e;
+  border-radius: 6px;
+  outline: none;
+  position: relative;
+  z-index: 1;
+}
+
+.innerScroller {
+  min-height: 100%;
+}
+
+.tableWrap:focus,
+.panel:focus {
+  box-shadow: 0 0 0 2px rgba(56, 116, 221, 0.22);
+}
+
+.tall {
+  height: 522px;
+}
+
+.gridTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+}
+
+.gridTable th,
+.gridTable td {
+  position: relative;
+  border: 1px solid #c9c9c9;
+  padding: 8px 6px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gridTable th:first-child,
+.gridTable td:first-child {
+  text-align: left;
+}
+
+.gridTable thead th {
+  position: sticky;
+  top: -1px;
+  z-index: 1;
+  background: #dbe4f3;
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.sortableTh {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortableButton {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
+.sortableButton:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.gridTable tbody tr {
+  background: #fff;
+}
+
+.gridTable tbody td {
+  background: #fff;
+}
+
+.gridTable tbody tr:hover {
+  background: #f7fbff;
+}
+
+.isSelected {
+  background: #edf4ff !important;
+}
+
+.isSelected td {
+  background: #edf4ff !important;
+}
+
+.keyboardFocus {
+  box-shadow: inset 0 0 0 2px #8bb2f2;
+}
+
+.cellFocus {
+  position: absolute;
+  inset: 2px;
+  border: 2px solid #8bb2f2;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.segmented {
+  display: flex;
+  gap: 6px;
+}
+
+.active {
+  background: #3874dd !important;
+  color: #fff !important;
+  border-color: #3874dd !important;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.pagination button {
+  min-width: 32px;
+}
+
+.pagination button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.toolbar button:disabled,
+.segmented button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.bottomNotice {
+  margin-top: 14px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.infoNotice {
+  color: blue;
+}
+
+.errorNotice {
+  color: red;
+}
+
+.warningNotice {
+  color: rgb(228, 148, 0);
+}
+
+.editBtn {
+  display: flex;
+  gap: 10px;
+  position: relative;
+  z-index: 6;
+  /* margin-bottom: 10px; */
+}
+
+.datePickerPopper {
+  z-index: 20 !important;
+}
+
+.datePickerCalendar {
+  z-index: 20 !important;
+}
+
+@media (max-width: 1400px) {
+  .pageShell {
+    min-width: 1100px;
+  }
+
+  .gridTable {
+    font-size: 13px;
+  }
+}

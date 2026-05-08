@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.domain.login.dao.FindDAO">
+    <select id="selectIDbyEmail" parameterType="String" resultType="String">
+        select loginID from tb_userinfo where email=#{email} and user_type='S'
+    </select>
+
+    <select id="selectCntbyIDAEmail" parameterType="Map" resultType="int">
+        select count(*) from tb_userinfo where loginID=#{id} and email=#{email}
+    </select>
+
+    <update id="updatePasswordByIDAEmail" parameterType="Map">
+        update tb_userinfo
+        set password = #{tmp_pw}, chk_tem_password='Y'
+        where loginID=#{id} and email=#{email}
+    </update>
+</mapper>

@@ -1,0 +1,503 @@
+.page {
+  max-width: 980px;
+  margin: 24px auto;
+  padding: 14px;
+  border: 1px solid #c9cdd3;
+  background: #f3f5f7;
+}
+
+.searchBar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.select,
+.input {
+  height: 30px;
+  border: 1px solid #aeb5bf;
+  background: #fff;
+  padding: 0 8px;
+  font-size: 13px;
+}
+
+.select {
+  min-width: 130px;
+}
+
+.input {
+  flex: 1;
+}
+
+.searchButton {
+  min-width: 72px;
+  height: 30px;
+  border: 1px solid #8d96a3;
+  background: #e6e9ee;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.searchButton:hover {
+  background: #dce1e8;
+}
+
+.tableWrap {
+  border: 1px solid #aeb5bf;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 13px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #c5cad1;
+  padding: 7px 6px;
+  text-align: center;
+  color: #2b2f35;
+}
+
+.table th {
+  background: #edf1f5;
+  font-weight: 600;
+  color: #3c4654;
+}
+
+.closedRow td {
+  background: #f2f4f6;
+  color: #9aa3ad;
+}
+
+.table tbody tr:not(.closedRow):hover td {
+  background: #f7f9fc;
+}
+
+.table td:nth-child(2) {
+  text-align: left;
+  padding-left: 14px;
+}
+
+.status {
+  font-weight: 600;
+}
+
+.inProgress {
+  color: #aa4a0f;
+}
+
+.scheduled {
+  color: #3a628a;
+}
+
+.closed {
+  color: #7d8692;
+}
+
+.downloadCell {
+  font-size: 12px;
+}
+
+.downloadButton {
+  border: none;
+  background: transparent;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.downloadButton:disabled {
+  cursor: not-allowed;
+}
+
+.downloadIcon {
+  width: 18px;
+  height: 18px;
+  fill: #4f5b67;
+}
+
+.downloadButton:hover .downloadIcon {
+  fill: #2f3b46;
+}
+
+.downloadIconDisabled,
+.downloadButton:disabled .downloadIcon {
+  fill: #a9b1bb;
+}
+
+.emptyRow {
+  padding: 18px 0;
+  color: #666;
+}
+
+.pagination {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+
+.pageButton,
+.pageNumber {
+  min-width: 32px;
+  height: 26px;
+  border: 1px solid #adb4bf;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+
+.pageNumber {
+  min-width: 58px;
+  padding: 0 8px;
+}
+
+.pageButton {
+  cursor: pointer;
+}
+
+.pageButton:disabled {
+  cursor: not-allowed;
+  color: #b8bec8;
+  background: #f4f6f8;
+}
+
+.itemInfo {
+  margin-right: 10px;
+  font-size: 12px;
+  color: #6e7782;
+}
+
+.pageSize {
+  margin-left: 4px;
+  min-width: 52px;
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid #adb4bf;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.evalButton {
+  min-width: 78px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #8d96a3;
+  background: #e6e9ee;
+  color: #2f3742;
+  font-size: 12px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.evalButton:hover {
+  background: #dce1e8;
+}
+
+.evalDisabled {
+  color: #8e97a3;
+  font-size: 12px;
+}
+
+.evalRow td {
+  background: #f7f9fc;
+}
+
+.evalForm {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.evalLabel,
+.evalLabelWide {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  font-size: 12px;
+  color: #44505e;
+}
+
+.evalLabel {
+  width: 110px;
+}
+
+.evalLabelWide {
+  flex: 1;
+}
+
+.evalInput {
+  height: 30px;
+  border: 1px solid #aeb5bf;
+  background: #fff;
+  padding: 0 8px;
+  font-size: 13px;
+}
+
+.evalAction {
+  min-width: 64px;
+  height: 30px;
+  border: 1px solid #8d96a3;
+  background: #e6e9ee;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.courseHomeworkCell {
+  text-align: left;
+  line-height: 1.35;
+}
+
+.deadlineText {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #7a8591;
+}
+
+.resultHeader {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border: 1px solid #aeb5bf;
+  background: #eef2f6;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2f3742;
+}
+
+.registerButton {
+  margin-left: auto;
+  min-width: 88px;
+  height: 30px;
+  border: 1px solid #7f8794;
+  background: #e2e6ec;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.registerButton:hover {
+  background: #d7dde6;
+}
+
+.registerPanel {
+  margin-top: 14px;
+  border: 1px solid #aeb5bf;
+  background: #fff;
+}
+
+.registerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #c5cad1;
+  background: #f3f6fa;
+}
+
+.registerTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2f3742;
+}
+
+.registerActions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionButton {
+  min-width: 72px;
+  height: 30px;
+  border: 1px solid #8d96a3;
+  background: #e6e9ee;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.registerTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.registerTable th,
+.registerTable td {
+  border: 1px solid #d0d5dc;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.registerTable th {
+  width: 95px;
+  background: #eef2f6;
+  color: #3b4552;
+}
+
+.formControl {
+  width: 100%;
+  height: 30px;
+  border: 1px solid #afb6c1;
+  background: #fff;
+  padding: 0 8px;
+  font-size: 13px;
+}
+
+.noticeList {
+  margin: 0;
+  padding: 12px 16px;
+  border-bottom: 1px solid #d0d5dc;
+  list-style: none;
+}
+
+.noticeList li {
+  margin: 6px 0;
+  font-size: 13px;
+  color: #40464f;
+}
+
+.noticeList li::before {
+  content: '※ ';
+  color: #6e7782;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #d0d5dc;
+}
+
+.fileName {
+  flex: 1;
+  min-height: 38px;
+  padding: 9px 12px;
+  font-size: 13px;
+  border-right: 1px solid #d0d5dc;
+  color: #2f3742;
+}
+
+.fileClear {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-right: 1px solid #d0d5dc;
+  background: #fff;
+  cursor: pointer;
+}
+
+.fileAttach {
+  min-width: 96px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: #e6e9ee;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+.splitLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leftPane {
+  flex: 1;
+  min-width: 0;
+}
+
+.rightPane {
+  width: 100%;
+  border: 1px solid #aeb5bf;
+  background: #fff;
+}
+
+.panelHeader {
+  padding: 10px 12px;
+  border-bottom: 1px solid #c5cad1;
+  background: #f3f6fa;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2f3742;
+}
+
+.panelBody {
+  padding: 12px;
+}
+
+.panelField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.panelLabel {
+  font-size: 12px;
+  color: #6e7782;
+}
+
+.panelValue {
+  font-size: 13px;
+  color: #2f3742;
+  line-height: 1.35;
+}
+
+.panelEmpty {
+  padding: 24px 12px;
+  color: #6e7782;
+  font-size: 13px;
+  text-align: center;
+}
+
+.panelDownloadButton {
+  width: 100%;
+  height: 32px;
+  margin-bottom: 10px;
+  border: 1px solid #8d96a3;
+  background: #eef2f6;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.panelDownloadButton:hover {
+  background: #e2e8ef;
+}
+
+.studentSubmitButton {
+  width: 100%;
+  height: 32px;
+  border: 1px solid #7f8794;
+  background: #e2e6ec;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.studentSubmitButton:disabled {
+  cursor: not-allowed;
+  color: #9aa3ad;
+  background: #f1f3f6;
+}
+
+.activeRow td {
+  background: #e9f0f8;
+}

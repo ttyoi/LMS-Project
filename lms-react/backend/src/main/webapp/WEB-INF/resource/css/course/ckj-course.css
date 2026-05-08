@@ -1,0 +1,929 @@
+@charset "UTF-8";
+
+/*======================================= 강의 페이지 높이 체인 =======================================*/
+/*
+  원인: body/#wrap_area/#container/ul/li.contents/.content 모두 height 미설정
+        → height:inherit가 의미없어 .ckj-left/.ckj-right가 li.contents를 벗어남
+  해결: 강의 페이지 전용(이 파일은 course 페이지만 로드)으로 아래에서 height chain 구성
+        float → flex 전환으로 높이 전파
+*/
+
+/* 1. viewport 기준 */
+html,
+body {
+  height: 100%;
+}
+
+/* 2. 페이지 래퍼 */
+#wrap_area {
+  height: 100%;
+}
+
+/* 3. 메인 컨테이너 (강의 페이지에는 #header 없음 → 100% 그대로) */
+#container {
+  height: 100%;
+}
+
+/* 4. float → flex: 자식 li들에게 높이 전파 */
+#container > ul {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+
+#container > ul > li {
+  float: none; /* layout.css의 float:left 해제 */
+}
+
+/* 5. lnb: 폭 유지, min-height 해제 */
+#container ul li.lnb {
+  min-height: 0;
+}
+
+/* 6. contents: flex column으로 .content에 높이 전파 */
+#container ul li.contents {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 7. .content: 남은 높이 채움, flex column */
+#container ul li.contents .content {
+  flex: 1;
+  min-height: 0; /* layout.css의 min-height:650px 해제 */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/*======================================= 기본 레이아웃 =======================================*/
+/* 8. .ckj-container: p.Location + p.conTitle 제외한 나머지 높이 자동 채움 */
+.container.ckj-container {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ckj-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  --color-primary-bright: hsl(214, 100%, 97%);
+  --color-primary-light: #dbeafe;
+  --color-primary-medium: #3b82f6;
+  --color-primary-dark: #2563eb;
+  --color-primary-darker: #1d4ed8;
+  --color-gray-brighter: #f6f7f8;
+  --color-gray-bright: #e8e9eb;
+  --color-gray-light: #d3d3d3;
+  --color-gray-medium: #bebebe;
+  --color-gray-dark: #9d9da0;
+  --color-gray-th: #f9fafb;
+  --color-gray-border: #e6e8eb;
+  --color-gray-blue: rgb(148, 163, 184);
+  --color-warning: #ef4444;
+  --color-warning-light: #f86161;
+  --color-warning-dark: #d13232;
+  --color-time-1: #c8ceee;
+  --color-time-2: #e8daf0;
+  --color-time-3: #f3e4f5;
+  --color-today: var(--color-primary-medium);
+  --color-sunday: #e83d3d;
+  --color-saturday: #4262ca;
+}
+
+.ckj-top {
+  grid-column: 1/3;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.ckj-left {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.ckj-right {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.ckj-right .ckj-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* left 패널 content: 폼/테이블이 숨겨지다 나타날 때 jitter 방지 */
+.ckj-left .ckj-content {
+  flex: 1;
+  min-height: 200px;
+  overflow-y: auto;
+}
+
+/*======================================= 기본엘리먼트 =======================================*/
+
+.ckj-container .required::before {
+  content: "*";
+  margin-right: 4px;
+  font-size: small;
+  color: var(--color-warning);
+}
+
+.ckj-container input[readonly] {
+  user-select: none;
+}
+
+.ckj-container input,
+.ckj-container select,
+.ckj-container textarea {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray-medium);
+  outline: none;
+  transition: all 0.2s;
+}
+
+/* WCAG 2.1 AA: 키보드 포커스 인디케이터 (outline: none 보완) */
+.ckj-container input:focus-visible,
+.ckj-container select:focus-visible,
+.ckj-container textarea:focus-visible {
+  outline: 2px solid var(--color-primary-medium);
+  /* outline-offset: 1px; */
+  border-color: var(--color-primary-medium);
+}
+
+.ckj-container table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.ckj-container th,
+.ckj-container td {
+  border: 1px solid var(--color-gray-light);
+  padding: 4px 6px;
+  transition: all 0.2s;
+}
+
+.ckj-container th {
+  background-color: var(--color-gray-th);
+  font-weight: 600; /* label vs value 시각 대비 강화 */
+}
+
+/*======================================= 버튼 =======================================*/
+.ckj-btn {
+  background-color: var(--color-gray-bright);
+  padding: 6px 12px;
+  border-radius: 6px;
+  outline: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ckj-btn:hover {
+  background-color: var(--color-gray-light);
+}
+
+.ckj-btn:focus-visible {
+  outline: 2px solid var(--color-gray-medium);
+}
+
+.ckj-btn.primary {
+  background-color: var(--color-primary-medium);
+  color: white;
+}
+
+.ckj-btn.primary:hover {
+  background-color: var(--color-primary-darker);
+}
+
+/* warning: 빨간 sharp 모양 (삭제/경고) */
+.ckj-btn.warning {
+  background-color: var(--color-warning);
+  color: white;
+}
+
+.ckj-btn.warning:hover {
+  background-color: var(--color-warning-dark);
+}
+
+/* disabled: 비활성 (pointer-events 유지하여 JS 클릭 감지 가능) */
+.ckj-btn.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ckj-btn.ckj-img-btn {
+  background-color: transparent;
+  font-size: 0;
+  text-indent: -9999px;
+  width: 20px;
+  aspect-ratio: 1/1;
+  border: none;
+  padding: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+}
+
+.ckj-img-btn.calendar {
+  background-image: url("/images/course/calendar_month_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg");
+}
+
+.ckj-img-btn.sort {
+  background-image: url("/images/course/mobiledata_arrows_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+.ckj-img-btn.asc {
+  background-image: url("/images/course/north_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+.ckj-img-btn.desc {
+  background-image: url("/images/course/south_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+.ckj-img-btn.cal-prev {
+  background-image: url("/images/course/arrow_left_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+.ckj-img-btn.cal-next {
+  background-image: url("/images/course/arrow_right_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+/* nav-btn: 정사각형 아이콘 버튼 (pagination / 이전주·다음주) */
+.ckj-btn.ckj-nav-btn {
+  border: 1px solid var(--color-gray-medium);
+  background-color: transparent;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  text-align: center;
+  line-height: 28px;
+  font-size: 12px;
+  border-radius: 4px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.ckj-nav-btn.first,
+.ckj-nav-btn.prev,
+.ckj-nav-btn.next,
+.ckj-nav-btn.last,
+.ckj-nav-btn.next-week,
+.ckj-nav-btn.last-week {
+  font-size: 0;
+  text-indent: -9999px;
+}
+
+.ckj-nav-btn.first {
+  background-image: url("/images/course/keyboard_double_arrow_left_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+.ckj-nav-btn.prev {
+  background-image: url("/images/course/keyboard_arrow_left_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+.ckj-nav-btn.next {
+  background-image: url("/images/course/keyboard_arrow_right_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+.ckj-nav-btn.last {
+  background-image: url("/images/course/keyboard_double_arrow_right_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+.ckj-nav-btn.last-week {
+  background-image: url("/images/course/arrow_left_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+.ckj-nav-btn.next-week {
+  background-image: url("/images/course/arrow_right_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+/* 현재 페이지 active */
+.ckj-nav-btn.active {
+  background-color: var(--color-primary-medium);
+  color: white;
+  border-color: var(--color-primary-medium);
+  font-weight: 600;
+}
+
+/* 비활성 (첫/마지막 페이지 등) */
+.ckj-nav-btn.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/*======================================= .ckj-top 영역 =======================================*/
+
+/* 목록 테이블 래퍼: flex 채움 */
+.ckj-list-table {
+  overflow: hidden;
+  width: 100%;
+}
+
+.ckj-list-table table {
+  width: 100%;
+  overflow: hidden;
+  border: none;
+  table-layout: fixed;
+}
+
+.ckj-list-table tbody tr {
+  height: 32px;
+}
+
+.ckj-list-table thead th {
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* tbody 셀: 기본 center, 강의명(2번째)은 left */
+.ckj-list-table tbody td {
+  text-align: center !important;
+  vertical-align: middle;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ckj-list-table tbody td:nth-child(2) {
+  text-align: left !important;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+/* tbody tr hover */
+.ckj-list-table tbody tr:not(.ckj-row-fill):hover {
+  background-color: var(--color-primary-bright);
+  cursor: pointer;
+}
+
+/* 빈 행 (5개 미만 시 높이 유지용) */
+.ckj-list-table .ckj-row-fill td {
+  pointer-events: none;
+  border-color: transparent;
+}
+
+.ckj-list-table .col-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.ckj-list-table .ckj-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+  flex-shrink: 0;
+}
+.ckj-list-table .ckj-btn:hover {
+  background-color: var(--color-gray-medium);
+}
+
+/* ── colgroup 컬럼 너비 고정 (table-layout: fixed 기준, th 보다 우선 적용) ── */
+.ckj-list-table col.ckj-col-no {
+  width: 60px;
+}
+.ckj-list-table col.ckj-col-date {
+  width: 220px;
+}
+.ckj-list-table col.ckj-col-room,
+.ckj-list-table col.ckj-col-time,
+.ckj-list-table col.ckj-col-subprof,
+.ckj-list-table col.ckj-col-stu {
+  width: 100px;
+}
+/* col.ckj-col-title: width 미지정 → 나머지 공간 자동 점유 */
+
+/* ── 컬럼 너비: data-col 기준 (colgroup 미지원 환경 fallback) ── */
+/* 번호: 가장 좁게 */
+.ckj-list-table th[data-col="no"] {
+  width: 44px;
+  min-width: 44px;
+}
+/* 강의기간: 고정 너비 */
+.ckj-list-table th[data-col="date"] {
+  width: 220px;
+  min-width: 200px;
+  white-space: nowrap;
+}
+/* 강의실, 차시, 보조강사, 수강인원, 강사명, 신청상태: 균등 */
+.ckj-list-table th[data-col="room"],
+.ckj-list-table th[data-col="time"],
+.ckj-list-table th[data-col="subprof"],
+.ckj-list-table th[data-col="stu"],
+.ckj-list-table th[data-col="inst"] {
+  width: 80px;
+  min-width: 80px;
+}
+/* 강의명: 나머지 공간 모두 */
+.ckj-list-table th[data-col="title"] {
+  min-width: 140px;
+  overflow: hidden;
+}
+
+/* ── 드롭다운 ── */
+.ckj-col-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #e4e8f0;
+  border-radius: 8px;
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.06);
+  z-index: 200;
+  padding: 10px;
+}
+
+.ckj-col-dropdown.is-open {
+  display: block;
+}
+
+.ckj-col-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-gray-dark);
+  font-size: 12px;
+  line-height: 1;
+  background-image: url("/images/course/arrow_drop_down_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+  flex-shrink: 0;
+}
+.ckj-col-menu-btn .ckj-sort-icon {
+  font-size: 0;
+}
+
+.ckj-col-menu-btn:hover {
+  background: var(--color-primary-bright);
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  background-image: url("/images/course/arrow_drop_down_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+.ckj-col-menu-btn.is-open {
+  background: var(--color-primary-light);
+  background-image: url("/images/course/arrow_drop_down_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+  border-color: var(--color-primary-medium);
+  color: var(--color-primary-dark);
+}
+.ckj-col-menu-btn.is-sorted {
+  color: var(--color-primary-dark);
+}
+.ckj-col-menu-btn.is-filtered {
+  background: var(--color-primary-bright);
+  position: relative;
+  background-image: url("/images/course/arrow_drop_down_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg");
+}
+
+/* 테이블 내 드롭다운: fixed 포지셔닝으로 overflow 탈출 */
+.ckj-list-table .ckj-col-dropdown {
+  position: fixed;
+  z-index: 9999;
+}
+
+.ckj-col-dropdown--wide {
+  min-width: 260px;
+}
+
+.ckj-sort-section {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.ckj-sort-btn {
+  flex: 1;
+  padding: 5px 6px;
+  font-size: 12px;
+  border: 1px solid var(--color-gray-light);
+  border-radius: 6px;
+  background: #f8f9fc;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.ckj-sort-btn:hover {
+  background: var(--color-primary-bright);
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+.ckj-sort-btn.is-active {
+  background: var(--color-primary-medium);
+  border-color: var(--color-primary-medium);
+  color: #fff;
+}
+
+.ckj-filter-divider {
+  margin: 8px 0;
+  border-top: 1px solid #f0f2f8;
+}
+
+.ckj-filter-section {
+  margin-bottom: 8px;
+}
+.ckj-col-dropdown .ckj-filter-section input[type="text"],
+.ckj-col-dropdown .ckj-filter-section select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--color-gray-light);
+  border-radius: 6px;
+  background: #fafbff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.ckj-col-dropdown .ckj-filter-section input[type="text"]:focus,
+.ckj-col-dropdown .ckj-filter-section select:focus {
+  border-color: var(--color-primary-medium);
+  background: #fff;
+}
+
+.ckj-date-range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ckj-col-dropdown .ckj-date-range input[type="date"] {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 6px;
+  font-size: 11px;
+  border: 1px solid var(--color-gray-light);
+  border-radius: 6px;
+  background: #fafbff;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.ckj-col-dropdown .ckj-date-range input[type="date"]:focus {
+  border-color: var(--color-primary-medium);
+}
+.ckj-date-sep {
+  font-size: 11px;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.ckj-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 130px;
+  overflow-y: auto;
+  padding: 2px 0;
+}
+.ckj-checkbox-list label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #444;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+.ckj-checkbox-list label:hover {
+  background: var(--color-primary-bright);
+}
+.ckj-checkbox-list input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--color-primary-medium);
+}
+
+.ckj-dropdown-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f2f8;
+  margin-top: 2px;
+}
+.ckj-apply-btn,
+.ckj-reset-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.ckj-apply-btn {
+  background: var(--color-primary-medium);
+  color: #fff;
+  border-color: var(--color-primary-medium);
+}
+.ckj-apply-btn:hover {
+  background: var(--color-primary-darker);
+}
+.ckj-reset-btn {
+  background: var(--color-gray-bright);
+  color: #555;
+  border-color: var(--color-gray-light);
+}
+.ckj-reset-btn:hover {
+  background: var(--color-gray-light);
+}
+
+/* ── 페이지네이션 ── */
+.ckj-pagination {
+  width: 100%;
+  gap: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 10px 0;
+  box-sizing: border-box;
+}
+
+/* ── action-section: 모든 패널 공통 최소 높이 표준화 (페이지 간 표 시작 위치 일치) ── */
+.ckj-action-section {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* left 패널 action-section: 탭 버튼 영역 */
+.ckj-left .ckj-action-section {
+  align-items: flex-end; /* 탭 버튼 하단 정렬 */
+}
+
+/*======================================= Skeleton UI (AJAX 로딩 중 Layout Shift 방지) =======================================*/
+@keyframes ckj-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.ckj-skeleton-row td {
+  height: 32px;
+  padding: 0 6px;
+}
+
+.ckj-skeleton-cell {
+  display: block;
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f0f2f5 25%, #e4e8ef 50%, #f0f2f5 75%);
+  background-size: 200% 100%;
+  animation: ckj-shimmer 1.5s infinite;
+}
+
+/*======================================= 빈 상태 / 에러 상태 =======================================*/
+.ckj-empty-row td {
+  text-align: center;
+  color: var(--color-gray-dark);
+  padding: 36px 32px;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+
+.ckj-error-row td {
+  text-align: center;
+  color: var(--color-warning);
+  padding: 36px 32px;
+  font-size: 13px;
+  background-color: #fff5f5;
+}
+
+/*======================================= .ckj-left 영역 =======================================*/
+.ckj-content-table input,
+.ckj-content-table textarea,
+.ckj-content-table select {
+  width: 100%;
+}
+
+.ckj-content-table {
+  table-layout: fixed;
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+}
+
+.ckj-content-table .col-label {
+  width: 80px;
+}
+
+.ckj-content-table th {
+  white-space: nowrap;
+  text-align: left;
+}
+
+/*======================================= .ckj-left-content =======================================*/
+/* .ckj-left의 남은 높이 전체를 차지하는 콘텐츠 컨테이너 */
+.ckj-left-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-gray-light);
+  overflow: hidden;
+  table-layout: fixed;
+  padding-bottom: 10px;
+}
+
+/* .ckj-left .ckj-content override: min-height 제거, flex 채움 */
+.ckj-left-content > .ckj-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.ckj-content-table .ckj-content-table tr:nth(1),
+.ckj-content-table tr:nth(2),
+.ckj-content-table tr:nth(3),
+.ckj-content-table tr:nth(4) {
+  height: 1px;
+}
+
+tr:nth-last-child(-n + 3) {
+  height: auto;
+}
+
+/* textarea 행: height auto (내용 따라 자동 확장) */
+.ckj-content-table .ckj-row-textarea {
+  height: auto;
+}
+
+.ckj-content-table .ckj-row-textarea td {
+  vertical-align: top;
+}
+
+.ckj-content-table .ckj-row-textarea td textarea {
+  height: 100%;
+  display: block;
+  min-height: 100px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+/* 외곽 border 제거: .ckj-left-content border가 대신함 */
+.ckj-left-content .ckj-content-table tr:first-child th,
+.ckj-left-content .ckj-content-table tr:first-child td,
+.ckj-left-content .ckj-stu-list tr:first-child th,
+.ckj-left-content .ckj-stu-list tr:first-child td {
+  border-top: none;
+}
+.ckj-left-content .ckj-content-table tr:last-child th,
+.ckj-left-content .ckj-content-table tr:last-child td,
+.ckj-left-content .ckj-stu-list tr:last-child th,
+.ckj-left-content .ckj-stu-list tr:last-child td {
+  border-bottom: none;
+}
+.ckj-left-content .ckj-content-table tr th:first-child,
+.ckj-left-content .ckj-content-table tr td:first-child,
+.ckj-left-content .ckj-stu-list tr th:first-child,
+.ckj-left-content .ckj-stu-list tr td:first-child {
+  border-left: none;
+}
+.ckj-left-content .ckj-content-table tr th:last-child,
+.ckj-left-content .ckj-content-table tr td:last-child,
+.ckj-left-content .ckj-stu-list tr th:last-child,
+.ckj-left-content .ckj-stu-list tr td:last-child {
+  border-right: none;
+}
+
+/*======================================= .ckj-right 영역 =======================================*/
+.ckj-right .ckj-action-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  min-height: 40px; /* 페이지 간 표 시작 위치 표준화 */
+  margin-bottom: 4px;
+}
+
+.ckj-right .ckj-action-section .ckj-btn {
+  padding: 6px 16px;
+}
+
+.ckj-warning {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-warning);
+  margin-top: 4px;
+  text-align: right;
+}
+
+.ckj-hidden {
+  display: none;
+}
+
+/* ── is-error: required 필드 미입력 시 경고 ── */
+.ckj-container input.is-error,
+.ckj-container select.is-error,
+.ckj-container textarea.is-error {
+  outline: 2px solid var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+/* ── 종강/낙제 행: disabled 시각 처리 ── */
+.ckj-list-table tbody tr.ckj-row-disabled td {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.ckj-list-table tbody tr.ckj-row-disabled:hover {
+  pointer-events: auto;
+  cursor: pointer;
+}
+.ckj-list-table tbody tr.ckj-row-disabled:hover td {
+  opacity: 0.65;
+}
+
+/* date picker trigger: 렌더링은 되지만 보이지 않음 (showPicker() 동작 필요) */
+.ckj-date-trigger {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/*======================================= 반응형 (Responsive) =======================================*/
+/* 1200px 이하: 2컬럼 그리드 → 1컬럼 세로 스택 */
+@media (max-width: 1200px) {
+  .ckj-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 220px auto auto;
+    overflow-y: auto;
+  }
+
+  .ckj-top {
+    grid-column: 1 / 2;
+  }
+
+  .ckj-left,
+  .ckj-right {
+    overflow: visible;
+    min-height: 300px;
+  }
+
+  /* 테이블: 강의기간 컬럼 min-width 축소 */
+  .ckj-list-table col.ckj-col-date {
+    width: 160px;
+  }
+  .ckj-list-table th[data-col="date"] {
+    width: 160px;
+    min-width: 140px;
+  }
+}

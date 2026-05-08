@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+    <mapper namespace="kr.happyjob.study.domain.student.dao.STestDAO" >
+
+        <!--  1) 수강생 시험 목록 조회 -->
+  <select id="getTestList" parameterType="map" resultType="kr.happyjob.study.domain.student.model.STestListDTO">
+    SELECT
+    t.course_id as courseId,
+    t.period,
+    t.title,
+    i.loginID,
+    s.submit_date as date,
+    t.status,
+    c_main.title as courseName,
+    t.start_date as startDate,
+    t.end_date as endDate
+    FROM
+    test_schedule t
+    INNER JOIN student_course c ON (t.course_id = c.course_id)
+    INNER JOIN course c_main ON (t.course_id = c_main.course_id) INNER JOIN tb_userinfo i ON (c.loginID = i.loginID)
+    LEFT OUTER JOIN student_test_schedule s ON (
+    i.loginID = s.loginID
+    AND t.course_id = s.course_id
+    AND t.period = s.period
+    )
+    WHERE
+    i.loginID = #{loginId}
+    <if test="course != null and course != ''">
+      AND t.course_id = #{course}
+    </if>
+    ORDER BY
+    t.date DESC, 1, 2, 4
+    LIMIT #{pageSize} OFFSET #{pageIndex}
+  </select>
+
+        <!-- 2) 시험 목록 count (페이징용) -->
+        <select id="getTestTotalCount" resultType="int">
+            SELECT COUNT(*)
+            FROM test_schedule t
+                     INNER JOIN student_course c ON t.course_id = c.course_id
+                     INNER JOIN tb_userinfo i on(c.loginID = i.loginID)
+            WHERE c.loginID = #{loginId}
+            -- 강의별 필터링 조건 추가시
+            <if test="course != null and course != ''">
+                AND t.course_id = #{course}
+            </if>
+        </select>
+
+    <!-- 3) 학생이 시험에 응시한 경우 점수 계산 -->
+    <select id="computeScore" parameterType="map" resultType="int">
+        SELECT
+        COALESCE(SUM(t.score), 0)
+        FROM
+        test_detail t
+        JOIN student_test_answer a
+        ON t.course_id = a.course_id
+        AND t.period = a.period
+        AND t.question_no = a.question_no
+        WHERE
+        a.loginId = #{loginId}
+        AND t.course_id = #{courseId}
+        AND t.period = #{period}
+        AND t.answer = a.student_answer
+    </select>
+
+    <!-- 4) 학생 답안 조회 -->
+    <select id="getStudentAnswer" parameterType="map"
+            resultType="kr.happyjob.study.domain.student.model.TestAnswerVO">
+        SELECT loginId, course_id AS courseId, period, question_no AS questionNo,
+               student_answer AS studentAnswer
+        FROM student_test_answer
+        WHERE loginId = #{loginId}
+          AND course_id = #{courseId}
+          AND period = #{period}
+    </select>
+
+    <!-- 5) 과정목록 불러오기 -->
+    <select id="getCourseList" resultType="kr.happyjob.study.domain.student.model.STestCourseListDTO">
+        SELECT
+            course_id,
+            c.title
+        FROM student_course sc
+        JOIN course c USING (course_id)
+        WHERE loginID = #{loginId}
+        ORDER BY 1,2
+    </select>
+
+    <!-- 6) 시험응시 가능여부 체크: status=1 이고 오늘이 응시 기간 내에 있어야 응시 가능 -->
+    <select id="checkExamAvailable" parameterType="map" resultType="java.lang.Integer">
+        SELECT status
+        FROM test_schedule
+        WHERE course_id = #{courseId}
+          AND period = #{period}
+          AND (start_date IS NULL OR CURDATE() >= start_date)
+          AND (end_date IS NULL OR CURDATE() &lt;= end_date)
+    </select>
+
+    <!-- 7) 시험문제 상세 불러오기 -->
+    <select id="getTestDetail" parameterType="map" resultType="kr.happyjob.study.domain.student.model.STestDetailDTO">
+        SELECT course_id,
+               period,
+               title as testTitle,
+               question_no as questionNo,
+               content,
+               option1,
+               option2,
+               option3,
+               option4,
+               answer,
+               comment
+        FROM test_detail
+        INNER JOIN test_schedule using(course_id,period)
+        WHERE course_id = #{courseId}
+        AND period = #{period}
+        ORDER BY question_no
+    </select>
+
+    <!-- 8) 학생의 응시정보 저장 -->
+    <insert id="submitTestAnswer">
+        INSERT INTO student_test_answer (
+            question_no,
+            period,
+            course_id,
+            loginID,
+            student_answer
+        ) VALUES (
+                     #{questionNo},
+                     #{period},
+                     #{courseId},
+                     #{loginId},
+                     #{studentAnswer}
+                 )
+    </insert>
+
+    <!-- 9) 수강생 응시날짜 저장, 없으면 insert, 이미 있다면 update -->
+    <insert id="submitDate">
+        INSERT INTO student_test_schedule (
+            loginID,
+            course_id,
+            period,
+            submit_date
+        ) VALUES (
+                     #{loginId},
+                     #{courseId},
+                     #{period},
+                     NOW()
+                 )
+        ON DUPLICATE KEY UPDATE
+            submit_date = NOW()
+    </insert>
+
+    <!-- 10) 수강생의 응시정보와 실제 정답 불러오기-->
+    <select id="getTestResult" parameterType="map" resultType="kr.happyjob.study.domain.student.model.STestResultDTO">
+        SELECT
+            t.course_id AS courseId,
+            t.period,
+            ts.title,
+            t.question_no AS questionNo,
+            t.content,
+            t.option1,
+            t.option2,
+            t.option3,
+            t.option4,
+            t.answer AS correctAnswer,
+            a.student_answer AS studentAnswer,
+            t.comment,
+            (CASE
+                WHEN t.answer = a.student_answer THEN t.score ELSE 0
+            END) AS earnedScore
+        FROM test_detail t
+                 JOIN test_schedule ts ON t.course_id = ts.course_id AND t.period = ts.period
+                 LEFT JOIN student_test_answer a
+                           ON t.course_id = a.course_id
+                               AND t.period = a.period
+                               AND t.question_no = a.question_no
+                               AND a.loginID = #{loginId}
+        WHERE t.course_id = #{courseId}
+          AND t.period = #{period}
+        ORDER BY t.question_no
+    </select>
+</mapper>

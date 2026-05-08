@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.student.dao.SCourseDAO">
+
+    <select id="courseTotalCnt"
+            resultType="int">
+        select count(co.course_id)
+        from course co
+        inner join tb_userinfo us on co.professor = us.loginID
+        inner join course_class cc on cc.class_id = co.class_id
+        <where>
+            <if test="searchKey == 'course_id' and searchWord != null and searchWord != ''">
+                AND co.course_id LIKE CONCAT('%', #{searchWord}, '%')
+            </if>
+            <if test="searchKey != 'course_id' and searchKey != null and searchKey != '' and searchWord != null and searchWord != ''">
+                AND ${searchKey} LIKE CONCAT('%', #{searchWord}, '%')
+            </if>
+            AND co.cos_sta_code = 1
+            AND co.course_isDeleted = 0
+        </where>
+        order by co.course_id desc
+    </select>
+
+    <select id="loadAllCourses"
+            parameterType="kr.happyjob.study.domain.student.model.SSearchParamsDTO"
+            resultType="kr.happyjob.study.domain.student.model.SCourseListDTO">
+        select co.course_id as course_id
+        , co.title as title
+        , us.name as name
+        , ct.start_time
+        , ct.end_time
+        , cc.class_name as class_name
+        , cc.people_limit
+        , IFNULL(sc.cnt, 0) as stu_num
+        , co.start_date
+        , co.end_date
+        , co.time_code
+        from course co
+        inner join tb_userinfo us on co.professor = us.loginID
+        inner join course_time ct on ct.time_code = co.time_code
+        inner join course_class cc on cc.class_id = co.class_id
+        left join (
+            select course_id, count(course_id) cnt
+            from student_course
+            where stu_cou_sta_code = 0
+            group by course_id
+        ) sc on co.course_id = sc.course_id
+        <where>
+            <if test="searchKey == 'course_id' and searchWord != null and searchWord != ''">
+                AND co.course_id LIKE CONCAT('%', #{searchWord}, '%')
+            </if>
+            <if test="searchKey != 'course_id' and searchKey != null and searchKey != '' and searchWord != null and searchWord != ''">
+                ${searchKey} LIKE CONCAT('%', #{searchWord}, '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND co.start_date <![CDATA[ >= ]]> #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND co.end_date <![CDATA[ <= ]]> #{endDate}
+            </if>
+            AND co.cos_sta_code = 1
+            AND co.course_isDeleted = 0
+        </where>
+        order by co.course_id
+        limit #{start}, #{end}
+    </select>
+
+    <select id="courseDetail"
+            resultType="kr.happyjob.study.domain.student.model.SCourseDetailDTO">
+        select co.course_id
+             , co.title
+             , co.start_date
+             , co.end_date
+             , co.content
+             , co.notice
+             , co.plan
+             , co.time_code
+
+             , us.name as professor
+             , us_sub.name as sub_prof
+
+             , ct.start_time
+             , ct.end_time
+
+             , cc.class_name
+             , cc.people_limit
+             , IFNULL(sc.cnt, 0) as stu_num
+        from course co
+                 inner join tb_userinfo us on co.professor = us.loginID
+                 inner join tb_userinfo us_sub on co.sub_prof = us_sub.loginID
+                 inner join course_time ct on ct.time_code = co.time_code
+                 inner join course_class cc on cc.class_id = co.class_id
+                 left join (select course_id, count(course_id) cnt
+                            from student_course
+                            where course_id = #{course_id}
+                              and stu_cou_sta_code = 0
+                            group by course_id) sc
+                           on co.course_id = sc.course_id
+        where co.course_id = #{course_id}
+        group by co.course_id
+    </select>
+
+    <select id="loadbaseDTO"
+            resultType="kr.happyjob.study.domain.student.model.SEnrollCheckDTO">
+        select c.course_id,
+               c.start_date,
+               c.end_date,
+               c.time_code
+        from student_course sc
+                 inner join course c on sc.course_id = c.course_id
+        where sc.loginID = #{loginID} and sc.stu_cou_sta_code in (0, -1)
+    </select>
+
+    <insert id="applyCourse">
+        insert into student_course
+        (course_id
+        , loginID
+        , stu_cou_sta_code)
+        VALUES (
+                 #{course_id}
+               , #{loginID}
+               , 0
+               )
+    </insert>
+
+    <delete id="deleteCourse">
+        delete from student_course
+        where course_id = #{course_id} and loginID = #{loginID}
+    </delete>
+
+    <select id="myCourseTotalCnt"
+            resultType="int">
+
+        select count(sc.stu_cou_id)
+        #         , ats.status
+        from student_course sc
+        <!--        inner join course_attendance ca on (ca.loginID = sc.loginID and ca.course_id = sc.course_id) &lt;!&ndash; 출석 갖고오기 &ndash;&gt;-->
+        <!--        inner join attendance_status ats on ats.att_sta_code = ca.att_sta_code &lt;!&ndash; 출석상태명 갖고오기 &ndash;&gt;  -->
+        <where>
+            sc.loginID = #{loginID}
+            <if test="searchKey != null and searchKey != ''">
+                AND sc.stu_cou_sta_code = #{searchKey}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND co.start_date <![CDATA[ >= ]]> #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND co.end_date <![CDATA[ <= ]]> #{endDate}
+            </if>
+        </where>
+        order by sc.stu_cou_sta_code asc
+    </select>
+
+    <select id="myCourseList" parameterType="kr.happyjob.study.domain.student.model.SSearchParamsDTO"
+            resultType="kr.happyjob.study.domain.student.model.SMyCourseListDTO">
+        SELECT
+        co.course_id,
+        co.title,
+        us.name,
+        cc.class_name,
+        scs.name as scs_name,
+        ct.start_time,
+        ct.end_time,
+        co.start_date,
+        co.end_date,
+        co.time_code
+        FROM student_course sc
+        INNER JOIN course co ON sc.course_id = co.course_id
+        INNER JOIN tb_userinfo us ON co.professor = us.loginID
+        INNER JOIN course_class cc ON co.class_id = cc.class_id
+        INNER JOIN student_course_status scs ON sc.stu_cou_sta_code = scs.stu_cou_sta_code
+        INNER JOIN course_time ct ON co.time_code = ct.time_code
+        WHERE sc.loginID = #{loginID}
+
+        <!-- 상태 필터가 있으면 -->
+        <if test="searchKey != null and searchKey != ''">
+            AND sc.stu_cou_sta_code = #{searchKey}
+        </if>
+
+        ORDER BY sc.stu_cou_sta_code ASC
+        LIMIT #{start}, #{pageSize}
+    </select>
+
+
+    <select id="myCourseDetail"
+            resultType="kr.happyjob.study.domain.student.model.SMyCosDetailDTO">
+        SELECT
+            sc.course_id,
+            co.title,
+            us.name AS professior,
+            sub_us.name AS sub_prof,
+            cc.class_name,
+            us.phone,
+            us.email,
+            scs.name AS stu_cou_sta_name,
+            co.start_date,
+            co.end_date,
+            co.time_code,
+            ct.start_time,
+            ct.end_time,
+            att.attendance,
+            att.absen_sick,
+            att.tard_levEarly,
+            co.content,
+            co.notice,
+            co.plan,
+
+            IFNULL(cnt.cnt, 0) as stu_num,
+            cc.people_limit
+
+        FROM student_course sc
+                 INNER JOIN course co ON sc.course_id = co.course_id
+                 INNER JOIN tb_userinfo us ON us.loginID = co.professor
+                 INNER JOIN tb_userinfo sub_us ON sub_us.loginID = co.sub_prof
+                 INNER JOIN course_class cc ON co.class_id = cc.class_id
+                 INNER JOIN student_course_status scs ON sc.stu_cou_sta_code = scs.stu_cou_sta_code
+                 INNER JOIN course_time ct ON co.time_code = ct.time_code
+                 LEFT JOIN (
+            SELECT
+                course_id,
+                loginID,
+                SUM(CASE WHEN att_sta_code = 1 THEN 1 ELSE 0 END) AS attendance,
+                SUM(CASE WHEN att_sta_code = 0 THEN 1 ELSE 0 END) AS absen_sick,
+                SUM(CASE WHEN att_sta_code IN (3,4,5) THEN 1 ELSE 0 END) AS tard_levEarly
+            FROM course_attendance
+            WHERE loginID = #{loginID}
+            GROUP BY course_id, loginID
+        ) att ON att.course_id = co.course_id AND att.loginID = sc.loginID
+                left join (
+                    select course_id, count(course_id) cnt
+                    from student_course
+                    where course_id = #{course_id}
+                    and stu_cou_sta_code = 0
+                    group by course_id
+                ) cnt on sc.course_id = cnt.course_id
+        WHERE sc.loginID = #{loginID}
+          AND sc.course_id = #{course_id}
+
+    </select>
+
+    <select id="loadSearchKeys"
+            resultType="kr.happyjob.study.domain.student.model.SSearchKeyDTO">
+        select detail_code
+             , detail_name
+        from tb_detail_code
+        where group_code = #{group_code}
+    </select>
+
+    <!-- =========================================================
+         ✅ 추가: 수강완료 이력 존재 여부
+         - 아래 COMPLETED_CODE 값(예: 1)은 프로젝트에 맞게 변경하세요.
+         - student_course_status 테이블에서 "수강완료"의 코드를 확인 후 반영
+         ========================================================= -->
+    <select id="myCourseAttCalendar" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT DATE_FORMAT(ca.date, '%Y-%m-%d') AS att_date,
+               ca.att_sta_code
+        FROM course_attendance ca
+        WHERE ca.loginID = #{loginID}
+          AND ca.course_id = #{course_id}
+          AND YEAR(ca.date) = #{year}
+          AND MONTH(ca.date) = #{month}
+        ORDER BY ca.date
+    </select>
+
+    <select id="existsAppliedCourse" resultType="int">
+        SELECT COUNT(1)
+        FROM student_course
+        WHERE loginID = #{loginID}
+        AND course_id = #{course_id}
+        AND stu_cou_sta_code = 0
+    </select>
+
+    <select id="existsCompletedCourse" resultType="int">
+        SELECT COUNT(1)
+        FROM student_course
+        WHERE loginID = #{loginID}
+          AND course_id = #{course_id}
+          AND stu_cou_sta_code = 1
+    </select>
+
+</mapper>

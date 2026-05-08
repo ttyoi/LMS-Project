@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.dashboard.dao.DashboardDao">
+
+	<!-- 전체 강사 수 -->
+	<select id="cntInstructor" resultType="int">
+		SELECT COUNT(loginID)
+		FROM   tb_userinfo
+		WHERE  user_type = 'I'
+	</select>
+
+	<!-- 전체 학생 수 -->
+	<select id="cntStudent" resultType="int">
+		SELECT COUNT(loginID)
+		FROM   tb_userinfo
+		WHERE  user_type = 'S'
+	</select>
+
+	<!-- 전체 강의 수 -->
+	<select id="cntCourse" resultType="int">
+		SELECT COUNT(*)
+		FROM   course
+	</select>
+
+	<!-- 시험 조회 -->
+	<select id="getExamMonth" parameterType="hashmap" resultType="kr.happyjob.study.domain.dashboard.model.ExamMonthModel">
+		SELECT
+			ts.course_id AS courseId,
+			ts.period AS period,
+			ts.title AS title,
+			IFNULL(c.title, '임시 과정') AS subject, -- 강의명이 없어도 나오게 처리
+			DATE_FORMAT(ts.date, '%Y-%m-%d') AS examDate
+		FROM test_schedule ts
+				 LEFT JOIN course c ON ts.course_id = c.course_id
+		WHERE YEAR(ts.date) = YEAR(NOW())
+		  AND MONTH(ts.date) = MONTH(NOW())
+		-- AND ts.date >= CURDATE() -- 지나간 시험도 이번 달이면 보이게 주석 처리
+		-- AND ts.status = 1 -- 활성화 상태인 것만 표시
+		ORDER BY ts.date ASC
+			-- LIMIT 1 -- 개수 제한
+	</select>
+
+	<!-- 수업 중인 강의실 조회 -->
+	<select id="getActiveClassrooms" parameterType="hashmap" resultType="kr.happyjob.study.domain.dashboard.model.ClassroomModel">
+		SELECT
+			cc.class_name AS roomNumber,
+			CONCAT(ct.start_time, ' ~ ', ct.end_time) AS timeSlot,
+			c.title AS subject,
+			DATE_FORMAT(c.start_date, '%Y-%m-%d') AS startDate,
+			DATE_FORMAT(c.end_date, '%Y-%m-%d') AS endDate,
+			c.course_id AS courseId,
+			c.title AS courseName
+		FROM course c
+				 INNER JOIN course_class cc ON c.class_id = cc.class_id
+				 INNER JOIN course_time ct ON c.time_code = ct.time_code
+		WHERE CURDATE() BETWEEN c.start_date AND c.end_date
+		  AND c.cos_sta_code = 1
+		  AND c.course_isDeleted = 0
+		ORDER BY cc.class_name, ct.start_time
+			LIMIT 10
+	</select>
+
+</mapper>
+
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">-->
+
+<!--<mapper namespace="kr.happyjob.study.domain.dashboard.dao.DashboardDao">-->
+<!--	-->
+<!--	<select id="cntEngineer" resultType="int">-->
+<!--		/*kr.happy.study.system.dao.DashboardDao.cntEngineer*/-->
+<!--		SELECT COUNT(loginID)-->
+<!--		FROM 	tb_userinfo-->
+<!--		WHERE	user_type = 'B'-->
+<!--	</select>	-->
+<!--	-->
+<!--	<select id="cntCompany" resultType="int">-->
+<!--		/*kr.happy.study.system.dao.DashboardDao.cntCompany*/-->
+<!--		SELECT COUNT(loginID)-->
+<!--		FROM 	tb_userinfo-->
+<!--		WHERE	user_type = 'C'-->
+<!--	</select>	-->
+<!--	-->
+<!--	<select id="cntProject" resultType="int">-->
+<!--		/*kr.happy.study.system.dao.DashboardDao.cntProject*/-->
+<!--		SELECT COUNT(pro_no)-->
+<!--		FROM 	tb_prolist-->
+<!--		&lt;!&ndash; WHERE	reg_date <![CDATA[<=]]> STR_TO_DATE(#{to_date}, '%Y-%m-%d')  &ndash;&gt; -->
+<!--	</select>	-->
+<!--	-->
+<!--	&lt;!&ndash; -->
+<!--	<select id="cntApplicant" resultType="int">-->
+<!--		/*kr.happy.study.system.dao.DashboardDao.cntApplicant*/-->
+<!--		SELECT COUNT(p.loginID)-->
+<!--		FROM 	tb_prolist p, tb_consupport cs-->
+<!--		WHERE	reg_date <![CDATA[<=]]> STR_TO_DATE(#{reg_date}, '%Y-%m-%d') -->
+<!--	</select>-->
+<!--	 &ndash;&gt;-->
+<!--	 -->
+<!--</mapper>-->

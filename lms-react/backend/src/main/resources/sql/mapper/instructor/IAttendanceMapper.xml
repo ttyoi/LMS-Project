@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.instructor.dao.IAttendanceDAO">
+    <select id="getCourseStudentList" resultType="kr.happyjob.study.domain.instructor.model.ICourseAttRatioVO">
+        SELECT
+                (SELECT name FROM tb_userinfo WHERE loginID = cour.professor) as prof_name
+             ,cour.course_id as course_id
+             ,tb_user.name as stu_name
+             ,tb_user.loginID as stu_loginID
+             ,cour.title as cour_title
+             , (SELECT att_sta_code
+                FROM course_attendance
+                WHERE course_id = cour.course_id
+                AND loginID = tb_user.loginID
+                AND DATE_FORMAT(date, '%Y-%m-%d') = CURDATE()
+                LIMIT 1) as today_att_code
+              , (SELECT attendance_code
+                FROM course_attendance
+                WHERE course_id = cour.course_id
+                    AND loginID = tb_user.loginID
+                    AND DATE_FORMAT(date, '%Y-%m-%d') = CURDATE()
+                  LIMIT 1) as today_att_code_pk
+             ,COUNT(CASE WHEN cour_att.att_sta_code = 1 THEN 1 END) AS att_cnt
+             ,COUNT(CASE WHEN cour_att.att_sta_code = 2 THEN 1 END) AS att_per_cnt
+             ,COUNT(CASE WHEN cour_att.att_sta_code = 3 THEN 1 END) AS att_leav_cnt
+             ,COUNT(CASE WHEN cour_att.att_sta_code = 4 THEN 1 END) AS att_out_cnt
+             ,COUNT(CASE WHEN cour_att.att_sta_code = 0 THEN 1 END) AS att_abs_cnt
+             ,stu_cour.stu_cou_sta_code as stu_cou_sta_code
+        FROM course cour
+                 INNER JOIN student_course stu_cour ON cour.course_id = stu_cour.course_id
+                 INNER JOIN tb_userinfo tb_user ON stu_cour.loginID = tb_user.loginID
+                 LEFT JOIN course_attendance cour_att ON (cour.course_id = cour_att.course_id AND tb_user.loginID = cour_att.loginID)
+        WHERE cour.course_id = #{course_id}
+          AND stu_cour.stu_cou_sta_code IN (0, 2)
+        GROUP BY cour.course_id, tb_user.name, cour.title, stu_loginID, stu_cour.stu_cou_sta_code
+        ORDER BY stu_cour.stu_cou_sta_code ASC, tb_user.name ASC
+    </select>
+    <select id="studentAttendanceCnt" resultType="int">
+        SELECT count(total.course_id) as stu_att_cnt
+        FROM (
+                 SELECT stu_cour.course_id
+                      ,tb_user.name
+                      ,stu_cour.loginID
+                 FROM student_course stu_cour
+                          left join
+                      course cour
+                      on stu_cour.course_id = cour.course_id
+                          left join
+                      tb_userinfo tb_user
+                      on stu_cour.loginID = tb_user.loginID
+                          left join
+                      course_attendance cour_att
+                      on stu_cour.loginID = cour_att.loginID
+                 WHERE stu_cour.course_id = #{course_id}
+                   and stu_cour.stu_cou_sta_code = 0
+                 GROUP BY stu_cour.course_id
+                        ,tb_user.name
+                        ,stu_cour.loginID
+                        ,cour.professor
+             ) as total
+    </select>
+    <select id="getStuAttDtlList" resultType="kr.happyjob.study.domain.instructor.model.ICourseAttDtlVO">
+        SELECT
+                (SELECT name FROM tb_userinfo WHERE loginID = cour.professor) as prof_nm
+             , stu_cour.loginID as loginID
+             , cour.course_id as course_id
+             , tb_user.name as stu_nm
+             , cour.title as cour_title
+             , DATE_FORMAT(cour_att.date, '%Y-%m-%d %H:%i') as att_date
+             , cour_att.att_sta_code as att_sta_code
+             , cour_att.attendance_code as att_code
+        FROM student_course stu_cour
+                 /* 1. 수강생 정보를 먼저 가져온다 (출석 여부와 상관없이) */
+                 INNER JOIN tb_userinfo tb_user ON tb_user.loginID = stu_cour.loginID
+                 INNER JOIN course cour ON cour.course_id = stu_cour.course_id
+            /* 2. 출석 기록은 '있으면' 가져온다 (없으면 NULL) */
+                 LEFT JOIN course_attendance cour_att ON (cour_att.loginID = stu_cour.loginID AND cour_att.course_id = stu_cour.course_id)
+        WHERE stu_cour.loginID = #{stu_loginID}
+          AND stu_cour.course_id = #{course_id}
+          AND stu_cour.stu_cou_sta_code = 0
+        ORDER BY att_date
+            LIMIT #{pageIndex}, #{pageSize}
+    </select>
+    <select id="getStuAttDtlCnt" resultType="int">
+        SELECT count(stu_cour.loginID) as totalCount
+        FROM student_course stu_cour
+        WHERE stu_cour.loginID = #{stu_loginID}
+          AND stu_cour.course_id = #{course_id}
+          AND stu_cour.stu_cou_sta_code = 0
+    </select>
+<!--    <update id="updateStuAtt">-->
+<!--      UPDATE course_attendance-->
+<!--      SET att_sta_code = #{att_sta_code}-->
+<!--      WHERE course_id = #{course_id}-->
+<!--        AND loginID = #{stu_loginID}  AND DATE_FORMAT(date, '%Y-%m-%d') = CURDATE()-->
+<!--    </update>-->
+    <update id="updateStuAtt">
+        UPDATE course_attendance
+        SET att_sta_code = #{att_sta_code}
+        WHERE attendance_code = #{att_code}
+    </update>
+
+    <select id="getStdAttDtlRegList" resultType="kr.happyjob.study.domain.instructor.model.ICourseAttRatioVO">
+        SELECT
+                (SELECT name FROM tb_userinfo WHERE loginID = cour.professor) as prof_name
+             , cour.course_id as course_id
+             , tb_user.name as stu_name
+             , tb_user.loginID as stu_loginID
+             , cour.title as cour_title
+             , att.att_sta_code as att_sta_code
+             , att.attendance_code as today_att_code
+             , stu_cour.stu_cou_sta_code as stu_cou_sta_code
+        , att.attendance_code as today_att_code
+        , #{att_date} as att_date
+        FROM course cour
+                 INNER JOIN student_course stu_cour ON cour.course_id = stu_cour.course_id
+                 INNER JOIN tb_userinfo tb_user ON stu_cour.loginID = tb_user.loginID
+                 LEFT JOIN course_attendance att ON (
+                     att.loginID = tb_user.loginID
+                     AND att.course_id = cour.course_id
+                     AND DATE_FORMAT(att.date, '%Y-%m-%d') = #{att_date}
+                 )
+        WHERE cour.course_id = #{course_id}
+          AND stu_cour.stu_cou_sta_code IN (0, 2)
+        GROUP BY cour.course_id, tb_user.name, cour.title, stu_loginID, stu_cour.stu_cou_sta_code, att.att_sta_code, att.attendance_code
+        ORDER BY stu_cour.stu_cou_sta_code ASC, tb_user.name ASC
+    </select>
+    <insert id="stuAttDtlReg">
+        <selectKey resultType="int" keyProperty="attendance_code" order="BEFORE">
+            SELECT IFNULL(MAX(attendance_code), 0) + 1 FROM course_attendance
+        </selectKey>
+        insert into course_attendance (
+                                       attendance_code
+                                      ,course_id
+                                      ,date
+                                      ,loginID
+                                      ,att_sta_code
+                                        ) values (
+                                                  #{attendance_code}
+                                                 ,#{course_id}
+                                                 ,#{date}
+                                                 ,#{loginID}
+                                                 ,#{att_sta_code}
+                                                 )
+    </insert>
+    <select id="stuAttDtlDupRegCnt" resultType="int">
+        SELECT COUNT(*) as dupCnt
+        FROM course_attendance
+        WHERE course_id = #{course_id}
+          AND loginID = #{loginID}
+          AND DATE_FORMAT(date, '%Y-%m-%d') = DATE_FORMAT(#{date}, '%Y-%m-%d')
+    </select>
+</mapper>
+

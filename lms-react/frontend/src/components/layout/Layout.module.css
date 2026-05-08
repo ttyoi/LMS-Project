@@ -1,0 +1,39 @@
+/* 메인 레이아웃 */
+
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f0f4f8;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* flex 내부에서 overflow 방지 */
+}
+
+.content {
+  flex: 1;
+  padding: 28px;
+  overflow-y: auto;
+}
+
+/* 모바일 오버레이 배경 */
+.overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 16px;
+  }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 199;
+  }
+}

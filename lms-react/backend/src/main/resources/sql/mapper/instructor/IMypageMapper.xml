@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.domain.instructor.dao.IMypageDAO">
+
+    <resultMap id="instructorMypageMap" type="kr.happyjob.study.domain.instructor.model.IMypageVO">
+        <result property="loginID"      column="loginID"/>
+        <result property="userType"     column="userType"/>
+        <result property="name"         column="name"/>
+        <result property="phone"        column="phone"/>
+        <result property="email"        column="email"/>
+        <result property="birthday"     column="birthday"/>
+        <result property="zipcode"      column="zipcode"/>
+        <result property="addr1"        column="addr1"/>
+        <result property="addr2"        column="addr2"/>
+
+        <result property="imgName"      column="imgName"/>
+        <result property="imgLogiPath"  column="imgLogiPath"/>
+        <result property="imgPhyPath"   column="imgPhyPath"/>
+
+        <result property="chkTemPassword" column="chk_tem_password"/>
+
+
+    </resultMap>
+
+    <select id="getInstructorMypage" resultMap="instructorMypageMap">
+        SELECT
+            loginID,
+            name,
+            phone,
+            email,
+            birthday,
+            user_type AS userType,
+            img_name AS imgName,
+            img_phy_path AS imgPhyPath,
+            zipcode,
+            addr1,
+            addr2,
+
+            chk_tem_password,
+
+            edu_level AS eduLevel,
+            career
+        FROM tb_userinfo
+        WHERE loginID = #{loginID}
+    </select>
+
+    <update id="updateInstructorMypage"
+            parameterType="kr.happyjob.study.domain.instructor.model.IUpdateDTO">
+        UPDATE tb_userinfo
+        <set>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="zipcode != null">
+                zipcode = #{zipcode},
+            </if>
+            <if test="addr1 != null">
+                addr1 = #{addr1},
+            </if>
+            <if test="addr2 != null">
+                addr2 = #{addr2},
+            </if>
+        </set>
+        WHERE loginID = #{loginID}
+    </update>
+
+    <update id="changePassword" parameterType="kr.happyjob.study.domain.student.model.MypagePasswordChangeParamDTO">
+        UPDATE tb_userinfo
+        SET password = #{newPw},chk_tem_password = 'N'
+        WHERE loginID = #{loginID}
+    </update>
+
+    <select id="checkOldPassword" parameterType="kr.happyjob.study.domain.student.model.MypagePasswordChangeParamDTO" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_userinfo
+        WHERE loginID = #{loginID}
+          AND password = #{oldPw}
+    </select>
+
+    <select id="getInstructorCourseStatusCards" parameterType="string" resultType="hashmap">
+        SELECT
+            c.course_id AS courseId,
+            c.title AS title,
+            IFNULL(cc.class_name, '') AS className,
+            DATE_FORMAT(c.start_date, '%Y-%m-%d') AS startDate,
+            DATE_FORMAT(c.end_date, '%Y-%m-%d') AS endDate,
+            TIME_FORMAT(ct.start_time, '%H:%i') AS startTime,
+            TIME_FORMAT(ct.end_time, '%H:%i') AS endTime,
+            COUNT(sc.loginID) AS studentCount
+        FROM course c
+                 LEFT JOIN course_class cc ON c.class_id = cc.class_id
+                 LEFT JOIN course_time ct ON c.time_code = ct.time_code
+                 LEFT JOIN student_course sc ON c.course_id = sc.course_id
+        WHERE c.professor = #{loginID}
+          AND c.course_isDeleted = 0
+        GROUP BY
+            c.course_id,
+            c.title,
+            cc.class_name,
+            c.start_date,
+            c.end_date,
+            ct.start_time,
+            ct.end_time
+        ORDER BY c.start_date DESC, c.course_id DESC
+    </select>
+
+    <update id="updateTempPasswordFlag" parameterType="string">
+        UPDATE tb_userinfo
+        SET chk_tem_password = 'N'
+        WHERE loginID = #{loginID}
+    </update>
+
+    <update id ="updateProfileImage"
+            parameterType="kr.happyjob.study.domain.student.model.MypageProfileUpdateParamDTO">
+        UPDATE tb_userinfo
+        SET
+            img_name = #{imgName},
+            img_logi_path = #{imgLogiPath},
+            img_phy_path = #{imgPhyPath}
+        WHERE loginID = #{loginID}
+    </update>
+    <select id="getEduCareer"
+            parameterType="string"
+            resultType="kr.happyjob.study.domain.instructor.model.IEduCareerVO">
+        SELECT edu_level AS eduLevel,
+               career
+        FROM tb_userinfo
+        WHERE loginID = #{loginID}
+    </select>
+    <update id="updateEduCareer"
+            parameterType="kr.happyjob.study.domain.instructor.model.IUpdateEduCareerDTO">
+        UPDATE tb_userinfo
+        SET
+            edu_level = #{eduLevel},
+            career    = #{career}
+        WHERE loginID = #{loginID}
+    </update>
+
+    <select id="getMyCourseList" parameterType="map"
+            resultType="kr.happyjob.study.domain.instructor.model.IMyCourseVO">
+        SELECT
+            c.course_id AS courseId,
+            c.title,
+            CONCAT(DATE(c.start_date), ' ~ ', DATE(c.end_date)) AS period,
+            CONCAT(ct.start_time, ' ~ ', ct.end_time) AS time,
+        cc.class_name AS className,
+        cc.people_limit AS peopleLimit,
+        cs.name AS statusName,
+        COALESCE((
+            SELECT COUNT(*)
+            FROM student_course sc
+            WHERE sc.course_id = c.course_id
+        ), 0) AS studentCount
+        FROM course c
+            LEFT JOIN course_class cc ON c.class_id = cc.class_id
+            LEFT JOIN course_time ct ON c.time_code = ct.time_code
+            LEFT JOIN course_status cs ON c.cos_sta_code = cs.cos_sta_code
+        WHERE c.professor = #{loginId}
+          AND c.course_isDeleted = false
+          AND c.cos_sta_code = 1
+        ORDER BY c.start_date DESC
+            LIMIT #{startRow}, #{pageSize}
+    </select>
+
+    <select id="getMyCourseListCnt" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM course
+        WHERE professor = #{loginId}
+          AND course_isDeleted = false
+          AND cos_sta_code = 1
+    </select>
+
+
+
+
+</mapper>

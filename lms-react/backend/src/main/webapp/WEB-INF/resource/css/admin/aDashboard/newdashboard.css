@@ -1,0 +1,353 @@
+/* 기본 초기화 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: #f4f6f9;
+    color: #333;
+}
+
+/* 대시보드 컨테이너 */
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+/* 상단 통계 카드 (강사, 학생, 강의) */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: 0.3s;
+    border: 1px solid #e0e0e0;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+}
+
+.stat-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.stat-icon.instructor {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.stat-icon.student {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.stat-icon.course {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.stat-number {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 15px;
+    color: #666;
+}
+
+/* 메인 중앙 그리드 (바로가기 + 공지사항) */
+.main-content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+/* 빠른 바로가기 */
+.quick-links-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.link-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.link-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: #333;
+    transition: 0.3s;
+    border: 1px solid transparent;
+}
+
+.link-card:hover {
+    transform: translateX(4px);
+    border-color: #007bff;
+    background: white;
+}
+
+.link-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    background: #667eea;
+}
+
+.link-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.link-desc {
+    font-size: 12px;
+    color: #888;
+}
+
+/* 최근 공지사항 */
+.notice-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.notice-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: 0.2s;
+}
+
+.notice-item:last-child {
+    border-bottom: none;
+}
+
+.notice-item:hover {
+    padding-left: 8px;
+    background: #f8f9fa;
+}
+
+.notice-title {
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notice-date {
+    font-size: 12px;
+    color: #999;
+}
+
+.view-more-link {
+    display: inline-block;
+    font-size: 13px;
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    padding-top: 10px;
+}
+
+/* 이번 달 시험 과목 (가로 스크롤) */
+.bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.exam-month-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.exam-month-card {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.exam-month-card::-webkit-scrollbar {
+    height: 8px;
+}
+
+.exam-month-card::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.exam-month-card::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.exam-month-card::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
+}
+
+.exam-item {
+    flex: 0 0 280px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+    transition: all 0.2s;
+}
+
+.exam-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.exam-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.exam-info {
+    font-size: 13px;
+    color: #666;
+}
+
+.exam-month-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #666;
+    text-align: center;
+    padding: 30px 20px;
+}
+
+/* 수업 중인 강의실 */
+.classroom-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.classroom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.classroom-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 18px;
+    border: 1px solid #e0e0e0;
+    transition: 0.3s;
+}
+
+.classroom-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.classroom-number {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.classroom-time {
+    font-size: 11px;
+    background: #667eea;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.classroom-subject {
+    font-size: 14px;
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 8px;
+}
+
+.classroom-period {
+    font-size: 12px;
+    color: #888;
+}
+
+/* 반응형 */
+@media (max-width: 1400px) {
+    .main-content-grid, .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .classroom-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .exam-month-card {
+        flex-direction: column;
+    }
+
+    .exam-item {
+        flex: 1 1 auto;
+    }
+}

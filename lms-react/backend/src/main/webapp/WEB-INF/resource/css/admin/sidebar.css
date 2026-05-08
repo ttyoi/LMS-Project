@@ -1,0 +1,400 @@
+@charset "UTF-8";
+
+/* =========================
+   Sidebar Override Final
+   ========================= */
+
+/* ===== 페이지 전체 래퍼 보정 ===== */
+html, body {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+#wrap_area {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #f1f5f9;
+}
+
+#container {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* ===== 전체 레이아웃 ===== */
+#container > ul {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#container li.lnb {
+    flex: 0 0 260px;
+    width: 260px !important;
+    min-width: 260px;
+    min-height: 100vh;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    box-shadow: 2px 0 12px rgba(15, 23, 42, 0.04);
+}
+
+#container li.contents {
+    flex: 1 1 auto;
+    width: auto !important;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    background: #f1f5f9;
+}
+
+#container li.contents .content {
+    width: 100% !important;
+    min-height: 100vh;
+    margin: 0 !important;
+    padding: 24px 32px !important;
+    box-sizing: border-box;
+}
+
+/* ===== LNB 공통 ===== */
+#lnb_area {
+    min-height: 100vh;
+    background: #ffffff;
+}
+
+/* ===== 로고 영역 ===== */
+li.lnb #lnb_area .logo {
+    display: block;
+    width: 100%;
+    padding-top:20px;
+    padding-bottom:20px;
+    background: #ffffff !important;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: center;
+}
+
+li.lnb #lnb_area .logo img,
+#lnb_area .logo img {
+    width: 150px !important;
+    height: auto !important;
+    max-width: 100%;
+}
+
+/* ===== 사용자 정보 영역 ===== */
+li.lnb #lnb_area .login {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    position: relative !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 78px !important;
+    margin: 20px 10px 18px !important;
+    padding: 14px 12px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18) !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+li.lnb #lnb_area .login .LoginImg {
+    display: block !important;
+    flex: 0 0 56px !important;
+    width: 56px !important;
+    height: 56px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    float: none !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    border: 2px solid rgba(255, 255, 255, 0.28) !important;
+    background: rgba(255, 255, 255, 0.18) !important;
+    box-sizing: border-box !important;
+}
+
+li.lnb #lnb_area .login .login-info {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    position: static !important;
+    float: none !important;
+}
+
+li.lnb #lnb_area .login .LoginName {
+    display: block !important;
+    position: static !important;
+    float: none !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 0 8px 0 !important;
+    padding: 0 !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+    text-indent: 0 !important;
+    white-space: nowrap !important;
+}
+
+li.lnb #lnb_area .login .btn_loginArea {
+    display: block !important;
+    position: static !important;
+    float: none !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+li.lnb #lnb_area .login .btn_loginArea .logout {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: static !important;
+    float: none !important;
+    width: auto !important;
+    min-width: 72px !important;
+    height: 28px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    border-radius: 7px !important;
+    background: rgba(255,255,255,0.14) !important;
+    border: 1px solid rgba(255,255,255,0.25) !important;
+    color: #ffffff !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    text-indent: 0 !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+}
+
+li.lnb #lnb_area .login .btn_loginArea .logout:hover {
+    background: rgba(255,255,255,0.24) !important;
+}
+/* ===== Navigation 타이틀 ===== */
+#lnb_area .nav-title {
+    padding: 4px 20px 10px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ===== 메뉴 리스트 ===== */
+li.lnb ul.lnbMenu {
+    padding: 0 12px 24px;
+}
+
+li.lnb ul.lnbMenu li {
+    margin-bottom: 8px;
+}
+
+/* ===== 1depth ===== */
+li.lnb ul.lnbMenu li dl dt a.lnbBtn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: auto;
+    height: auto;
+    padding: 14px 16px !important;
+    background: #ffffff !important;
+    border-radius: 12px;
+    color: #334155 !important;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+li.lnb ul.lnbMenu li dl dt a.lnbBtn:link,
+li.lnb ul.lnbMenu li dl dt a.lnbBtn:visited {
+    color: #334155 !important;
+}
+
+li.lnb ul.lnbMenu li dl dt a.lnbBtn .lnb-text {
+    color: inherit !important;
+    flex: 1;
+    text-align: left;
+    word-break: keep-all;
+}
+
+li.lnb ul.lnbMenu li dl dt a.lnbBtn:hover {
+    background: #eff6ff !important;
+    color: #2563eb !important;
+}
+
+li.lnb ul.lnbMenu li dl dt a.lnbBtn:hover .lnb-text {
+    color: #2563eb !important;
+}
+
+/* 열림/활성 상태 */
+#lnb_area .lnbMenu > li.open > dl > dt > a.lnbBtn,
+li.lnb ul.lnbMenu li dl dt a.lnbBtn.on,
+li.lnb ul.lnbMenu li dl dt a.lnbBtn.active {
+    background: #dbeafe !important;
+    color: #1d4ed8 !important;
+}
+
+#lnb_area .lnbMenu > li.open > dl > dt > a.lnbBtn .lnb-text,
+li.lnb ul.lnbMenu li dl dt a.lnbBtn.on .lnb-text,
+li.lnb ul.lnbMenu li dl dt a.lnbBtn.active .lnb-text {
+    color: #1d4ed8 !important;
+}
+
+/* ===== 화살표 위치 강제 고정 ===== */
+li.lnb ul.lnbMenu li dl dt a.lnbBtn em,
+li.lnb ul.lnbMenu li dl dt a.on em,
+li.lnb ul.lnbMenu li dl dt a.active em,
+#lnb_area .lnbMenu > li.open > dl > dt > a.lnbBtn em {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    margin-left: 10px !important;
+    width: 8px !important;
+    height: 8px !important;
+    display: inline-block !important;
+    background: none !important;
+    flex-shrink: 0 !important;
+}
+
+/* 닫힘: > */
+li.lnb ul.lnbMenu li dl dt a.lnbBtn em {
+    border-right: 2px solid #94a3b8 !important;
+    border-bottom: 2px solid #94a3b8 !important;
+    transform: rotate(-45deg) !important;
+}
+
+/* 열림: 아래 */
+#lnb_area .lnbMenu > li.open > dl > dt > a.lnbBtn em,
+li.lnb ul.lnbMenu li dl dt a.lnbBtn.on em,
+li.lnb ul.lnbMenu li dl dt a.lnbBtn.active em {
+    border-right: 2px solid #2563eb !important;
+    border-bottom: 2px solid #2563eb !important;
+    transform: rotate(45deg) !important;
+}
+
+/* ===== 2depth ===== */
+li.lnb ul.lnbMenu li dl dd {
+    display: none;
+    padding: 8px 0 0 8px;
+    background: transparent !important;
+}
+
+#lnb_area .lnbMenu > li.open dl dd {
+    display: block;
+}
+
+li.lnb ul.lnbMenu li dl dd a {
+    display: block;
+    position: relative;
+    line-height: 1.4;
+    padding: 10px 14px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+    color: #475569 !important;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: transparent !important;
+    transition: all 0.2s ease;
+    opacity: 1 !important;
+}
+
+li.lnb ul.lnbMenu li dl dd a:link,
+li.lnb ul.lnbMenu li dl dd a:visited {
+    color: #475569 !important;
+    background: transparent !important;
+}
+
+li.lnb ul.lnbMenu li dl dd a span {
+    color: inherit !important;
+}
+
+li.lnb ul.lnbMenu li dl dd a:hover {
+    background: #f8fafc !important;
+    color: #2563eb !important;
+    opacity: 1 !important;
+}
+
+li.lnb ul.lnbMenu li dl dd a:hover span {
+    color: #2563eb !important;
+}
+
+/* 현재 선택 강조 */
+li.lnb ul.lnbMenu li dl dd a.current,
+li.lnb ul.lnbMenu li dl dd a.active,
+li.lnb ul.lnbMenu li dl dd a.on,
+li.lnb ul.lnbMenu li dl dd a.current:link,
+li.lnb ul.lnbMenu li dl dd a.active:link,
+li.lnb ul.lnbMenu li dl dd a.on:link,
+li.lnb ul.lnbMenu li dl dd a.current:visited,
+li.lnb ul.lnbMenu li dl dd a.active:visited,
+li.lnb ul.lnbMenu li dl dd a.on:visited {
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+    padding-left: 18px !important;
+}
+
+li.lnb ul.lnbMenu li dl dd a.current span,
+li.lnb ul.lnbMenu li dl dd a.active span,
+li.lnb ul.lnbMenu li dl dd a.on span {
+    color: #1d4ed8 !important;
+}
+
+/* 현재 선택 왼쪽 포인트 */
+li.lnb ul.lnbMenu li dl dd a.current::before,
+li.lnb ul.lnbMenu li dl dd a.active::before,
+li.lnb ul.lnbMenu li dl dd a.on::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 999px;
+    background: #2563eb;
+}
+
+/* ===== 기존 이미지 스프라이트 제거 ===== */
+a.lnbBtn.menu001,
+a.lnbBtn.menu002,
+a.lnbBtn.menu003,
+a.lnbBtn.menu004,
+a.lnbBtn.menu005,
+a.lnbBtn.menu001.on,
+a.lnbBtn.menu002.on,
+a.lnbBtn.menu003.on,
+a.lnbBtn.menu004.on,
+a.lnbBtn.menu005.on {
+    background-image: none !important;
+}

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.happyjob.study.domain.instructor.dao.IHomeworkFileDAO">
+
+  <!-- 과제-파일 연결 저장 -->
+  <insert id="insertHomeworkFile" parameterType="map">
+    INSERT INTO homework_file (
+      type,
+      homework_code,
+      submission_code,
+      file_id
+    )
+    VALUES (
+             #{type},
+             #{homework_code},
+             #{submission_code},
+             #{file_id}
+           )
+  </insert>
+
+  <!-- 🔥 파일 자체 저장 (DAO에 있는 insertFile 구현) -->
+  <!-- 🔥 파일 자체 저장 (DAO에 있는 insertFile 구현) -->
+  <insert id="insertFile"
+          parameterType="kr.happyjob.study.domain.instructor.model.FileVO"
+          useGeneratedKeys="true"
+          keyProperty="file_id">
+
+    INSERT INTO file (
+      name,
+      logical_path,
+      physical_path,
+      size
+    )
+    VALUES (
+             #{name},
+             #{logical_path},
+             #{physical_path},
+             #{size}
+           )
+  </insert>
+
+
+  <!-- 특정 과제에 연결된 파일 조회 -->
+  <select id="selectFilesByHomework" parameterType="int" resultType="map">
+    SELECT
+      hf.file_id,
+      f.name          AS file_name,
+      f.logical_path  AS logical_path,
+      f.physical_path AS physical_path,
+      f.size          AS file_size,
+      f.type          AS file_type
+    FROM homework_file hf
+           JOIN file f ON hf.file_id = f.file_id
+    WHERE hf.homework_code = #{homework_code}
+  </select>
+
+
+
+
+  <delete id="deleteHomeworkFile" parameterType="int">
+    DELETE FROM homework_file
+    WHERE homework_code = #{homework_code}
+      AND type = 'HOMEWORK'
+  </delete>
+
+  <!-- 실제 파일 삭제 기능 추가 -->
+  <delete id="deleteFile" parameterType="int">
+    DELETE FROM FILE
+    WHERE file_id= #{file_id}
+  </delete>
+
+  <!-- fileId 조회 기능 추가-->
+  <select id="findFileId" parameterType="int" resultType="int">
+    SELECT file_id
+    FROM homework_file
+    WHERE homework_code = #{homework_code}
+      AND type = 'HOMEWORK'
+  </select>
+
+  <!-- homeworkFile 존재유무 조회기능 추가-->
+  <select id="countHomeworkFile" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM homework_file
+    WHERE homework_code = #{homework_code}
+      AND type = 'HOMEWORK'
+  </select>
+
+  <!-- file 존재유무 조회기능 추가-->
+  <select id="countFile" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM file
+    WHERE file_id = #{file_id}
+  </select>
+
+    <select id="selectFileDetail" parameterType="int" resultType="map">
+        SELECT
+            name,
+            physical_path,
+            logical_path,
+            size,
+            type
+        FROM file
+        WHERE file_id = #{file_id}
+    </select>
+
+</mapper>

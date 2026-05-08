@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.domain.admin.dao.ATestDAO" >
+    <!-- 1) 시험 목록 불러오기 -->
+    <select id="getTestList" parameterType="list" resultType="kr.happyjob.study.domain.admin.model.ATestListVO">
+        SELECT
+            course_id as courseId,
+            c.title,
+            s.period,
+            c.professor,
+            u.name AS professorName,
+            s.status
+        FROM test_schedule s
+        INNER JOIN course c using(course_id)
+        INNER JOIN tb_userinfo u ON (c.professor = u.loginID)
+        WHERE 1=1
+        <if test="filteredType != null and filteredType != '' and keyword != null and keyword != ''">
+            <choose>
+                <when test="filteredType == 'teacher'">
+                    AND u.name LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="filteredType == 'title'">
+                    AND c.title LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+            </choose>
+        </if>
+
+        ORDER BY s.date DESC,1,3
+        LIMIT #{pageSize} OFFSET #{pageIndex}
+    </select>
+
+    <!-- 2) 시험 목록 count (페이징용) -->
+    <select id="getTestTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM test_schedule s
+        INNER JOIN course c using (course_id)
+        WHERE 1=1
+        <if test="filteredType != null and filteredType != '' and keyword != null and keyword != ''">
+            <choose>
+                <when test="filteredType == 'teacher'">
+                    AND c.professor LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="filteredType == 'title'">
+                    AND s.title LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </select>
+
+    <!-- 3) 시험 상태 업데이트 -->
+    <update id="updateTestStatus" parameterType="map">
+        UPDATE test_schedule
+        SET status = #{status}
+        WHERE course_id = #{courseId}
+        AND   period = #{period}
+    </update>
+
+    <!-- 4) 시험 상세보기 -->
+    <select id="getTestDetail" parameterType="map" resultType="kr.happyjob.study.domain.admin.model.ATestDetailVO">
+        SELECT
+            td.course_id AS courseId,
+            c.title AS courseName,
+            td.period,
+            ts.title AS testName,
+            td.question_no AS questionNo,
+            td.content,
+            td.option1,
+            td.option2,
+            td.option3,
+            td.option4,
+            td.answer,
+            td.score,
+            td.comment
+        FROM test_detail td
+        JOIN course c on (td.course_id = c.course_id)
+        JOIN test_schedule ts on (td.course_id = ts.course_id AND td.period = ts.period)
+        WHERE td.course_id = #{courseId}
+          AND td.period = #{period}
+        ORDER BY td.question_no
+    </select>
+
+    <!-- 5) 시험 문제 수정 -->
+    <update id="updateTestDetail" parameterType="kr.happyjob.study.domain.admin.model.ATestDetailVO">
+        UPDATE test_detail
+        SET content = #{content},
+            option1 = #{option1},
+            option2 = #{option2},
+            option3 = #{option3},
+            option4 = #{option4},
+            answer = #{answer},
+            score = #{score},
+            comment = #{comment}
+        WHERE course_id = #{courseId} AND period = #{period} AND question_no = #{questionNo}
+    </update>
+
+    <!-- 6) 시험 상태 체크 -->
+    <select id="checkStatus" resultType="kr.happyjob.study.domain.admin.model.ATestStatusVO">
+        SELECT
+            ts.course_id AS courseId,
+            ts.period,
+            ts.status
+        FROM test_schedule ts
+        WHERE ts.course_id = #{courseId}
+          AND ts.period = #{period}
+    </select>
+</mapper>

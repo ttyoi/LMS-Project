@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.domain.common.dao.InstructorDAO">
+	<select id="getInstList" resultType="kr.happyjob.study.domain.common.model.InstructorVO">
+		SELECT loginID, name, zipcode, addr1, addr2, birthday
+		     , phone, email, edu_level, career, img_name
+		     , img_logi_path, img_phy_path, reg_date, ret_date, status
+		FROM tb_userinfo
+	</select>
+	<select id="getDelayedInstList" resultType="kr.happyjob.study.domain.common.model.InstructorVO">
+		SELECT loginID, name, zipcode, addr1, addr2, birthday
+		     , phone, email, edu_level, career, img_name
+		     , img_logi_path, img_phy_path, reg_date, ret_date, status
+		FROM tb_userinfo
+		WHERE status = 'D'
+	</select>
+	<select id="getRegisteredInstList" parameterType="java.util.Map" resultType="kr.happyjob.study.domain.common.model.InstructorVO">
+		SELECT loginID, name, zipcode, addr1, addr2, birthday
+		     , phone, email, edu_level, career, img_name
+		     , img_logi_path, img_phy_path, reg_date, ret_date, status
+		FROM tb_userinfo
+		WHERE status = 'R'
+	</select>
+</mapper>

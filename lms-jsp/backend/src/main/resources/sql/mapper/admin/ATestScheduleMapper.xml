@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.mapper.admin.ATestMapper">
+
+    <!-- 시험일정 리스트 조회 -->
+    <select id="selectTestScheduleList" resultType="kr.happyjob.study.domain.admin.model.ATestSchedule.ATestSchedule">
+        SELECT
+            c.course_id AS course_courseId,
+            c.title AS course_title,
+            ts.period AS testSchedule_period,
+            u.name AS tbUserinfo_name,
+            c.start_date AS course_startDate,
+            c.end_date AS course_endDate,
+            cc.class_name AS courseClass_className,
+            ts.title AS testSchedule_title,
+            ts.date AS testSchedule_date,
+            ts.status AS testSchedule_status
+        FROM test_schedule ts
+                 JOIN course c ON ts.course_id = c.course_id
+                 JOIN course_class cc ON c.class_id = cc.class_id
+                 JOIN tb_userinfo u ON c.professor = u.loginID
+        ORDER BY ts.date DESC;
+
+    </select>
+
+    <select id="selectTestScheduleDetail" resultType="kr.happyjob.study.domain.admin.model.ATestSchedule.ATestSchedule">
+        SELECT
+            c.course_id            AS course_courseId,
+            c.title                AS course_title,
+            cc.class_name          AS courseClass_className,
+            u.name                 AS tbUserinfo_name,
+            ts.title               AS testSchedule_title,
+            ts.date                AS testSchedule_date,
+            ts.status              AS testSchedule_status,
+            ts.period              AS testSchedule_period
+        FROM test_schedule ts
+                 JOIN course c ON ts.course_id = c.course_id
+                 JOIN course_class cc ON c.class_id = cc.class_id
+                 JOIN tb_userinfo u ON c.professor = u.loginID
+        WHERE ts.course_id = #{courseId}
+           AND ts.period = #{period};
+
+    </select>
+
+
+    <update id="updateTestScheduleStatus">
+        UPDATE test_schedule
+        SET
+            status = #{status},
+            date = CASE
+                WHEN #{status} = 1 AND date IS NULL
+                THEN CURRENT_DATE
+                ELSE date
+                END
+        WHERE   course_id = #{courseId}
+         AND   period = #{period}
+    </update>
+
+</mapper>
