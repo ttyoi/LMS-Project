@@ -259,15 +259,6 @@ npm run dev
 
 ---
 
-## 개발 가이드
-
-- **React 코드 작성 가이드**: [lms-react/README.md](lms-react/README.md)
-- **JSP/jQuery 코드 작성 가이드**: [lms-jsp/backend/README.md](lms-jsp/backend/README.md)
-- **기능정의/API 명세**: [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1lvp0uC5bCf3_d-a8rbsA8xBXVxjA4kUc/edit?pli=1&gid=648316872#gid=648316872)
-- **개발 컨벤션**: [Notion](https://www.notion.so/2b982816a50480a7b152c9771de792e8)
-
----
-
 ## API 경로 규칙 (lms-react)
 
 Vite 프록시 설정상 API 요청 경로는 `/api`로 시작하거나 `.do`로 끝나야 백엔드로 전달됩니다.
