@@ -30,7 +30,7 @@ React 2026.4.13 ~ 2026.4.27
 | DB         | MySQL 8.0                                                     |
 | 빌드       | Maven (WAR 패키징)                                            |
 | 서버       | Tomcat                                                        |
-| 기타       | Lombok, Apache POI (Excel), WebSocket, Gmail SMTP, AES 암호화 |
+| 기타       | Lombok, Apache POI (Excel), Gmail SMTP |
 
 ### Frontend
 
