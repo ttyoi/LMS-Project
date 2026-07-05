@@ -109,7 +109,7 @@ LMS-Project/
 │           ├── components/
 │           │   ├── layout/        # Header, Sidebar, Layout (수정 금지)
 │           │   └── common/        # ProtectedRoute, PlaceholderPage
-│           └── pages/             # ✅ 기능 구현 영역
+│           └── pages/             # 기능 구현 영역
 │               ├── admin/         # 관리자 페이지
 │               ├── attendance/    # 출결 관리
 │               ├── dashboard/     # 대시보드
