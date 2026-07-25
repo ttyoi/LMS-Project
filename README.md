@@ -245,7 +245,7 @@ npm install
 npm run dev
 ```
 
-브라우저에서 `http://localhost:3000` 접속 (백엔드가 먼저 실행 중이어야 합니다)
+브라우저에서 `http://localhost:3000` 접속
 
 ---
 
@@ -276,8 +276,6 @@ Vite 프록시 설정상 API 요청 경로는 `/api`로 시작하거나 `.do`로
 | ------------- | --------------------------------------------------------------------------- |
 | 인증          | `AuthCheckInterceptor` — 전체 경로 세션 체크, 로그인/회원가입/정적자원 제외 |
 | 시험 상태     | `ExamStatusScheduler` — 시험 시작/종료 시각 기준 자동 상태 전환             |
-| 실시간 메시지 | WebSocket (`MessageHandler`)                                                |
-| 파일 업로드   | 최대 200MB, 세션 타임아웃 720분                                             |
+| 파일 업로드   | `MultipartFile` — 최대 200MB, 세션 타임아웃 720분                          |
 | 메일 발송     | Gmail SMTP (port 465, SSL) — 회원가입 인증·비밀번호 찾기                    |
-| 암호화        | AES (민감 정보 처리)                                                        |
 | Excel         | Apache POI 기반 다운로드                                                    |
